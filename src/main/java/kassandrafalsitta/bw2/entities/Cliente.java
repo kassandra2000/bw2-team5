@@ -1,58 +1,60 @@
 package kassandrafalsitta.bw2.entities;
 
-import jakarta.persistence.*;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
+@Entity
 @Table(name = "clienti")
-
-public class Cliente extends Utente {
-
-    private String ragioneSociale;
-    private String partitaIva;
+@JsonIgnoreProperties({"password", "ruolo", "authorities", "enabled", "accountNonLocked", "accountNonExpired", "credentialsNonExpired"})
+public class Cliente extends Utente implements UserDetails {
+    private long partitaIva;
     private LocalDate dataInserimento;
     private LocalDate dataUltimoContatto;
-    private BigInteger fatturatoAnnuale;
+    private int fatturatoAnnuale;
     private String pec;
-    private String telefono;
-    private String emailContatto;
-    private String nomeContatto;
-    private String cognomeContatto;
-    private String telefonoContatto;
+    private long telefono;
+    private String emailDiContatto;
+    private String nomeDiContatto;
+    private String cognomeDiContatto;
+    private long telefonoDiContatto;
     private String logoAziendale;
     private String tipoClienti;
 
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
-    private List<Indirizzo> indirizzi;
-
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
-    private List<Fattura> fatture;
-
-    public Cliente(UUID id, String username, String email, String password, String nome, String cognome, String avatar, String ragioneSociale, String partitaIva, LocalDate dataInserimento, LocalDate dataUltimoContatto, BigInteger fatturatoAnnuale, String pec, String telefono, String emailContatto, String nomeContatto, String cognomeContatto, String telefonoContatto, String logoAziendale, String tipoClienti, List<Indirizzo> indirizzi, List<Fattura> fatture) {
-        super(id, username, email, password, nome, cognome, avatar);
-        this.ragioneSociale = ragioneSociale;
+    public Cliente(String username, String nome, String cognome, String email, String password, long partitaIva, LocalDate dataInserimento, LocalDate dataUltimoContatto, int fatturatoAnnuale, String pec, long telefono, String emailDiContatto, String nomeDiContatto, String cognomeDiContatto, long telefonoDiContatto, String logoAziendale, String tipoClienti) {
+        super(username, nome, cognome, email, password);
         this.partitaIva = partitaIva;
         this.dataInserimento = dataInserimento;
         this.dataUltimoContatto = dataUltimoContatto;
         this.fatturatoAnnuale = fatturatoAnnuale;
         this.pec = pec;
         this.telefono = telefono;
-        this.emailContatto = emailContatto;
-        this.nomeContatto = nomeContatto;
-        this.cognomeContatto = cognomeContatto;
-        this.telefonoContatto = telefonoContatto;
+        this.emailDiContatto = emailDiContatto;
+        this.nomeDiContatto = nomeDiContatto;
+        this.cognomeDiContatto = cognomeDiContatto;
+        this.telefonoDiContatto = telefonoDiContatto;
         this.logoAziendale = logoAziendale;
         this.tipoClienti = tipoClienti;
-        this.indirizzi = indirizzi;
-        this.fatture = fatture;
+    }
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(this.getRuolo().name()));
     }
 }
