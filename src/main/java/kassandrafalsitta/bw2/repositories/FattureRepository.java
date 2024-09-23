@@ -16,8 +16,6 @@ public interface FattureRepository extends JpaRepository<Fattura, UUID> {
     List<Fattura> findByCliente(Cliente cliente);
     Optional<Fattura> findByNumeroAndCliente(String numero,Cliente cliente);
 
-    //filtro fatture per id cliente
-    List<Fattura> filterByCliente(UUID clienteId);
     //filtro fatture per stato
     List<Fattura> filterByStato(String stato);
     //filtro fatture per data

@@ -95,6 +95,7 @@ public class FattureService {
         this.fattureRepository.delete(this.findById(fatturaId));
     }
 
+
     public List<Fattura> findByCliente(Cliente cliente) {
         return this.fattureRepository.findByCliente(cliente);
     }
