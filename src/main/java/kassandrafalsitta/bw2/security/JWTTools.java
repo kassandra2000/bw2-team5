@@ -2,7 +2,7 @@ package kassandrafalsitta.bw2.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import kassandrafalsitta.bw2.entities.Clienti;
+import kassandrafalsitta.bw2.entities.Cliente;
 import kassandrafalsitta.bw2.exceptions.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -15,11 +15,11 @@ public class JWTTools {
     @Value("${jwt.secret}")
     private String secret;
 
-    public String createToken(Clienti clienti) {
+    public String createToken(Cliente cliente) {
         return Jwts.builder()
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 3))
-                .subject(String.valueOf(clienti.getId()))
+                .subject(String.valueOf(cliente.getId()))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
     }

@@ -1,6 +1,6 @@
 package kassandrafalsitta.bw2.services;
 
-import kassandrafalsitta.bw2.entities.Clienti;
+import kassandrafalsitta.bw2.entities.Cliente;
 import kassandrafalsitta.bw2.enums.Ruolo;
 import kassandrafalsitta.bw2.exceptions.BadRequestException;
 import kassandrafalsitta.bw2.exceptions.NotFoundException;
@@ -29,32 +29,32 @@ public class ClientiService {
     private MailgunSender mailgunSender;
 
 
-    public Page<Clienti> findAll(int page, int size, String sortBy) {
+    public Page<Cliente> findAll(int page, int size, String sortBy) {
         if (page > 100) page = 100;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return this.clientiRepository.findAll(pageable);
     }
 
-    public Clienti saveClienti(ClientiDTO body) {
+    public Cliente saveClienti(ClientiDTO body) {
         this.clientiRepository.findByEmail(body.email()).ifPresent(
                 employee -> {
                     throw new BadRequestException("L'email " + body.email() + " è già in uso!");
                 }
         );
-        Clienti employee = new Clienti(body.username(), body.name(), body.surname(), body.email(),bcrypt.encode(body.password()));
-        Clienti savedClienti = this.clientiRepository.save(employee);
+        Cliente employee = new Cliente(body.username(), body.name(), body.surname(), body.email(), bcrypt.encode(body.password()));
+        Cliente savedCliente = this.clientiRepository.save(employee);
 
         // 4. Invio email conferma registrazione
-        mailgunSender.sendRegistrationEmail(savedClienti);
-        return savedClienti ;
+        mailgunSender.sendRegistrationEmail(savedCliente);
+        return savedCliente;
     }
 
-    public Clienti findById(UUID employeeId) {
+    public Cliente findById(UUID employeeId) {
         return this.clientiRepository.findById(employeeId).orElseThrow(() -> new NotFoundException(employeeId));
     }
 
-    public Clienti findByIdAndUpdate(UUID employeeId, ClientiDTO updatedClienti) {
-        Clienti found = findById(employeeId);
+    public Cliente findByIdAndUpdate(UUID employeeId, ClientiDTO updatedClienti) {
+        Cliente found = findById(employeeId);
         found.setClientiname(updatedClienti.username());
         found.setName(updatedClienti.name());
         found.setSurname(updatedClienti.surname());
@@ -63,8 +63,8 @@ public class ClientiService {
         return this.clientiRepository.save(found);
     }
 
-    public Clienti findByIdAndUpdateRuolo(UUID employeeId, ClientiRuoloDTO updatedClientiRuolo) {
-        Clienti found = findById(employeeId);
+    public Cliente findByIdAndUpdateRuolo(UUID employeeId, ClientiRuoloDTO updatedClientiRuolo) {
+        Cliente found = findById(employeeId);
         Ruolo ruolo = null;
         try {
             ruolo = Ruolo.valueOf(updatedClientiRuolo.ruolo());
@@ -80,7 +80,7 @@ public class ClientiService {
     }
 
 
-    public Clienti findByEmail(String email) {
+    public Cliente findByEmail(String email) {
         return clientiRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("L'utente con l'email " + email + " non è stato trovato!"));
     }
 }
