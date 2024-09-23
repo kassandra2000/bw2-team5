@@ -1,5 +1,6 @@
 package kassandrafalsitta.bw2.controllers;
 
+import kassandrafalsitta.bw2.entities.Cliente;
 import kassandrafalsitta.bw2.entities.Fattura;
 import kassandrafalsitta.bw2.exceptions.BadRequestException;
 import kassandrafalsitta.bw2.payloads.FatturaDTO;
@@ -14,6 +15,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -32,11 +36,10 @@ public class FatturaController {
     }
 
 
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public FatturaRespDTO createFattura(@RequestBody @Validated FatturaDTO body, BindingResult validationResult) {
-        if(validationResult.hasErrors())  {
+        if (validationResult.hasErrors()) {
             String messages = validationResult.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .collect(Collectors.joining(". "));
@@ -64,4 +67,5 @@ public class FatturaController {
     public void findFatturaByIdAndDelete(@PathVariable UUID reservationId) {
         fattureService.findByIdAndDelete(reservationId);
     }
+
 }
