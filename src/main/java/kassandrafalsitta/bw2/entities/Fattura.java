@@ -21,7 +21,7 @@ public class Fattura {
     @GeneratedValue
     UUID id;
 
-    private LocalDate data;
+    private LocalDate dataFattura;
     private double importo;
     private String numero;
     private String statoFattura;
