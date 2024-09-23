@@ -5,5 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/clienti")
+
 public class ClientiController {
+
 }
