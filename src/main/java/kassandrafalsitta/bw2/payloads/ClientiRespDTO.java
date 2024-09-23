@@ -6,6 +6,6 @@ import java.util.UUID;
 
 public record ClientiRespDTO(
         @NotNull(message = "L'UUID è obbligatorio")
-        UUID employeeId
+        UUID clienteId
 ) {
 }

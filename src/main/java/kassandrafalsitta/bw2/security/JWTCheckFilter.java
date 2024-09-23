@@ -6,7 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kassandrafalsitta.bw2.entities.Cliente;
-import kassandrafalsitta.bw2.services.ClienteService;
+import kassandrafalsitta.bw2.services.ClientiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,7 +26,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
     @Autowired
     private JWTTools jwtTools;
     @Autowired
-    private ClienteService utenteService;
+    private ClientiService clientiService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -38,9 +38,9 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         System.out.println("ACCESS TOKEN " + accessToken);
         jwtTools.verifyToken(accessToken);
         String id = jwtTools.extractIdFromToken(accessToken);
-        Cliente currentCliente = this.utenteService.findById(UUID.fromString(id));
+        Cliente currentClienti = this.clientiService.findById(UUID.fromString(id));
 
-       Authentication authentication = new UsernamePasswordAuthenticationToken(currentCliente, null, currentCliente.getAuthorities());
+       Authentication authentication = new UsernamePasswordAuthenticationToken(currentClienti, null, currentClienti.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication); // <-- Associo l'utente autenticato (Autentication) al Context
 
         filterChain.doFilter(request, response);

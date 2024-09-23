@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
     @Autowired
-    private ClienteService clientiService;
+    private ClientiService clientiService;
 
     @Autowired
     private JWTTools jwtTools;
@@ -20,7 +20,7 @@ public class AuthService {
 
     public String checkCredentialsAndGenerateToken(ClientiLoginDTO body) {
 
-        Cliente found = this.clienteService.findByEmail(body.email());
+        Cliente found = this.clientiService.findByEmail(body.email());
         if (bcrypt.matches(body.password(), found.getPassword())) {
             return jwtTools.createToken(found);
         } else {

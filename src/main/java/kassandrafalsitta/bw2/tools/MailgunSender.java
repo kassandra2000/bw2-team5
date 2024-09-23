@@ -1,5 +1,6 @@
 package kassandrafalsitta.bw2.tools;
 
+import kassandrafalsitta.bw2.entities.Cliente;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.JsonNode;
 import kong.unirest.core.Unirest;
@@ -18,13 +19,13 @@ public class MailgunSender {
         this.email = email;
     }
 
-    public void sendRegistrationEmail(Clienti recipient) {
+    public void sendRegistrationEmail(Cliente recipient) {
         HttpResponse<JsonNode> response = Unirest.post("https://api.mailgun.net/v3/" + this.domainName + "/messages")
                 .basicAuth("api", this.apiKey)
                 .queryString("from", this.email) 
                 .queryString("to", recipient.getEmail())
                 .queryString("subject", "Registrazione completata")
-                .queryString("text", "Ciao " + recipient.getName() + ", grazie per esserti registrato!")
+                .queryString("text", "Ciao " + recipient.getNome() + ", grazie per esserti registrato!")
                 .asJson();
         System.out.println(response.getBody());
     }
