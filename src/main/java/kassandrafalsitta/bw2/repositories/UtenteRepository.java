@@ -1,4 +1,6 @@
 package kassandrafalsitta.bw2.repositories;
 
-public class UtenteRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UtenteRepository extends JpaRepository {
 }

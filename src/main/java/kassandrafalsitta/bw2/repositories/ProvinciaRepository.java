@@ -1,4 +1,6 @@
 package kassandrafalsitta.bw2.repositories;
 
-public class ProvinciaRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProvinciaRepository extends JpaRepository {
 }

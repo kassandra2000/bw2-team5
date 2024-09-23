@@ -1,4 +1,6 @@
 package kassandrafalsitta.bw2.repositories;
 
-public class FatturaRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface FatturaRepository extends JpaRepository {
 }
