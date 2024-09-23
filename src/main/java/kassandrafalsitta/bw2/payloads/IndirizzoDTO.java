@@ -2,6 +2,7 @@ package kassandrafalsitta.bw2.payloads;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import kassandrafalsitta.bw2.entities.Comune;
 
 public record IndirizzoDTO(
         @NotEmpty(message = "La via è obbligatoria")

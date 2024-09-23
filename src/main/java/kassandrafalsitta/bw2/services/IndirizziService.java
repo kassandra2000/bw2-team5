@@ -3,6 +3,7 @@ package kassandrafalsitta.bw2.services;
 import kassandrafalsitta.bw2.entities.Indirizzo;
 import kassandrafalsitta.bw2.exceptions.NotFoundException;
 import kassandrafalsitta.bw2.payloads.IndirizzoDTO;
+import kassandrafalsitta.bw2.repositories.ComuneRepository;
 import kassandrafalsitta.bw2.repository.IndirizzoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ public class IndirizziService {
     private IndirizzoRepository indirizziRepository;
 
     @Autowired
+    private ComuneRepository comuneRepository;
 
     public List<Indirizzo> findAll() {
         return indirizziRepository.findAll();
