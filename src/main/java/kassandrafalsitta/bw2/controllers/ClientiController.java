@@ -82,4 +82,6 @@ public class ClientiController {
     public Cliente uploadMyCover(@AuthenticationPrincipal Cliente currentAuthenticatedCliente, @RequestParam("avatar") MultipartFile image) throws IOException {
         return this.clientiService.uploadImage(currentAuthenticatedCliente.getId(), image);
     }
+
+    @
 }

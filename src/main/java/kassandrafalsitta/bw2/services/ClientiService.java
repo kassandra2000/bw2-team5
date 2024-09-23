@@ -20,8 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -155,4 +157,45 @@ public class ClientiService {
         found.setAvatar(avatar);
         return this.clientiRepository.save(found);
     }
+
+    public List<Cliente> getClientiOrdinePerNome(){
+        return clientiRepository.findbyNome();
+    }
+
+    public List<Cliente> getClientiOrdinePerFatturatoAnnuale(){
+        return clientiRepository.findByFatturatoAnnuale();
+    }
+
+    public List<Cliente> getClientiOrdinePerDataInserimento(){
+        return clientiRepository.findByDataInserimento();
+    }
+
+    public List<Cliente> getClientiOrdinePerDataUltimoContatto(){
+        return clientiRepository.findByUltimoContatto();
+    }
+
+    public List<Cliente> getClientiOrdinePerProvinciaSedeLegale(){
+        return clientiRepository.findByProvinciaSedeLegale();
+    }
+
+    public List<Cliente> getClientiFiltraPerNome(String nome){
+        return clientiRepository.filterByNome(nome);
+    }
+
+    public List<Cliente> getClientiFiltraPerFatturatoAnnuale(BigDecimal minimo, BigDecimal massimo){
+        return clientiRepository.filterByFatturatoAnnuale(minimo, massimo);
+    }
+
+    public List<Cliente> getClientiFiltraPerDataInserimento(LocalDate startDate, LocalDate endDate){
+        return clientiRepository.filterByDataInserimento(startDate, endDate);
+    }
+
+    public List<Cliente> getClientiFiltraPerUltimoContatto(LocalDate startDate, LocalDate endDate){
+        return clientiRepository.filterByUltimoContatto(startDate, endDate);
+    }
+
+    public List<Cliente> getClientiFiltraPerProvinciaSedeLegale(){
+        return clientiRepository.filterByProvinciaSedeLegale();
+    }
+
 }
