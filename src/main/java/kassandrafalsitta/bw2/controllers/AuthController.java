@@ -6,7 +6,7 @@ import kassandrafalsitta.bw2.payloads.ClientiLoginDTO;
 import kassandrafalsitta.bw2.payloads.ClientiLoginRespDTO;
 import kassandrafalsitta.bw2.payloads.ClientiRespDTO;
 import kassandrafalsitta.bw2.services.AuthService;
-import kassandrafalsitta.bw2.services.ClientiService;
+import kassandrafalsitta.bw2.services.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/auth")
 public class AuthController {
     @Autowired
-    private ClientiService ClientiService;
+    private ClienteService ClientiService;
 
     @Autowired
     private AuthService authService;

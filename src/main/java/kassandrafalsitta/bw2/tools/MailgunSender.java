@@ -1,6 +1,5 @@
 package kassandrafalsitta.bw2.tools;
 
-import kassandrafalsitta.bw2.entities.Clienti;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.JsonNode;
 import kong.unirest.core.Unirest;
