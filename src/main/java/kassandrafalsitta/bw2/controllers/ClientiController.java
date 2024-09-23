@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -124,5 +126,45 @@ public class ClientiController {
         Fattura userFattura = eventList.stream().filter(event -> event.getId().equals(clientId)).findFirst()
                 .orElseThrow(() -> new NotFoundException(clientId));
         this.fattureService.findByIdAndDelete(userFattura.getId());
+    }
+
+    @GetMapping("/filtra")
+    public List<Cliente> getClientiFiltrati(
+            @RequestParam(required = false) BigDecimal fatturatoMin,
+            @RequestParam(required = false) BigDecimal fatturatoMax,
+            @RequestParam(required = false) LocalDate dataInserimentoStart,
+            @RequestParam(required = false) LocalDate dataInserimentoEnd,
+            @RequestParam(required = false) LocalDate dataUltimoContattoStart,
+            @RequestParam(required = false) LocalDate dataUltimoContattoEnd,
+            @RequestParam(required = false) String nome ) {
+
+        if (fatturatoMin != null && fatturatoMax != null) {
+            return clientiService.getClientiFiltraPerFatturatoAnnuale(fatturatoMin, fatturatoMax);
+        } else if (dataInserimentoStart != null && dataInserimentoEnd != null) {
+            return clientiService.getClientiFiltraPerDataInserimento(dataInserimentoStart, dataInserimentoEnd);
+        } else if (dataUltimoContattoStart != null && dataUltimoContattoEnd != null) {
+            return clientiService.getClientiFiltraPerUltimoContatto(dataUltimoContattoStart, dataUltimoContattoEnd);
+        } else {
+            return clientiService.getClientiFiltraPerNome(nome);
+        }
+
+    }
+
+    @GetMapping("/ordina")
+    public List<Cliente> getClientiOrdinati(@RequestParam String param){
+        switch (param.toLowerCase()) {
+            case "nome":
+                return clientiService.getClientiOrdinePerNome();
+            case "fatturatoannuo":
+                return clientiService.getClientiOrdinePerFatturatoAnnuale();
+            case "datainserimento":
+                return clientiService.getClientiOrdinePerDataInserimento();
+            case "dataultimocontatto":
+                return clientiService.getClientiOrdinePerDataUltimoContatto();
+            case "provinciasedelegale":
+                return clientiService.getClientiOrdinePerProvinciaSedeLegale();
+            default:
+                throw new IllegalArgumentException("Campo di ordinamento non valido");
+        }
     }
 }
