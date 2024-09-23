@@ -7,11 +7,12 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface ClientiRepository extends JpaRepository<Cliente, UUID> {
-    List<Cliente> findByEmail(String email);
+    Optional<Cliente> findByEmail(String email);
 
     //Ordinamento per Nome
     List<Cliente> findbyNome();

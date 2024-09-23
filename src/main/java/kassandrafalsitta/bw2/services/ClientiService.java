@@ -158,7 +158,9 @@ public class ClientiService {
         return this.clientiRepository.save(found);
     }
 
-    public List<Cliente> getClientiOrdinePerNome(){
+
+
+public List<Cliente> getClientiOrdinePerNome(){
         return clientiRepository.findbyNome();
     }
 
