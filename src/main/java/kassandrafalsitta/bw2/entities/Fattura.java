@@ -18,10 +18,10 @@ import java.util.UUID;
 public class Fattura {
     @Id
     @Setter(AccessLevel.NONE)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     UUID id;
 
-    private LocalDate data;
+    private LocalDate dataFattura;
     private double importo;
     private String numero;
     private String statoFattura;

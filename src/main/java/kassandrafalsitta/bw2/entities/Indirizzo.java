@@ -16,7 +16,7 @@ import java.util.UUID;
 public class Indirizzo {
     @Id
     @Setter(AccessLevel.NONE)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     UUID id;
 
     private String via;

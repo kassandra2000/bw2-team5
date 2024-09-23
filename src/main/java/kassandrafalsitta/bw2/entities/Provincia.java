@@ -17,7 +17,7 @@ import java.util.UUID;
 public class Provincia {
     @Id
     @Setter(AccessLevel.NONE)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     UUID id;
 
     private String nome;
