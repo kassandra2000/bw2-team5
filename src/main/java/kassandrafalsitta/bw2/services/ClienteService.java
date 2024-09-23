@@ -16,6 +16,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -83,4 +86,47 @@ public class ClienteService {
     public Cliente findByEmail(String email) {
         return clienteRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("L'utente con l'email " + email + " non è stato trovato!"));
     }
+
+    public List<Cliente> getClientiOrdinePerNome(){
+        return clienteRepository.findbyNome();
+    }
+
+    public List<Cliente> getClientiOrdinePerFatturatoAnnuale(){
+        return clienteRepository.findByFatturatoAnnuale();
+    }
+
+    public List<Cliente> getClientiOrdinePerDataInserimento(){
+        return clienteRepository.findByDataInserimento();
+    }
+
+    public List<Cliente> getClientiOrdinePerDataUltimoContatto(){
+        return clienteRepository.findByUltimoContatto();
+    }
+
+    public List<Cliente> getClientiOrdinePerProvinciaSedeLegale(){
+        return clienteRepository.findByProvinciaSedeLegale();
+    }
+
+    public List<Cliente> getClientiFiltraPerNome(String nome){
+        return clienteRepository.filterByNome(nome);
+    }
+
+    public List<Cliente> getClientiFiltraPerFatturatoAnnuale(BigDecimal minimo, BigDecimal massimo){
+        return clienteRepository.filterByFatturatoAnnuale(minimo, massimo);
+    }
+
+    public List<Cliente> getClientiFiltraPerDataInserimento(LocalDate startDate, LocalDate endDate){
+        return clienteRepository.filterByDataInserimento(startDate, endDate);
+    }
+
+    public List<Cliente> getClientiFiltraPerUltimoContatto(LocalDate startDate, LocalDate endDate){
+        return clienteRepository.filterByUltimoContatto(startDate, endDate);
+    }
+
+    public List<Cliente> getClientiFiltraPerProvinciaSedeLegale(){
+        return clienteRepository.filterByProvinciaSedeLegale();
+    }
+
+
+
 }

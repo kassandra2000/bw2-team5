@@ -1,4 +1,5 @@
 package kassandrafalsitta.bw2.services;
+import kassandrafalsitta.bw2.entities.Cliente;
 import kassandrafalsitta.bw2.exceptions.UnauthorizedException;
 import kassandrafalsitta.bw2.payloads.ClientiLoginDTO;
 import kassandrafalsitta.bw2.security.JWTTools;
@@ -19,7 +20,7 @@ public class AuthService {
 
     public String checkCredentialsAndGenerateToken(ClientiLoginDTO body) {
 
-        Clienti found = this.clientiService.findByEmail(body.email());
+        Cliente found = this.clienteService.findByEmail(body.email());
         if (bcrypt.matches(body.password(), found.getPassword())) {
             return jwtTools.createToken(found);
         } else {

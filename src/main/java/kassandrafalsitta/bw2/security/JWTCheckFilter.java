@@ -40,7 +40,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         String id = jwtTools.extractIdFromToken(accessToken);
         Cliente currentCliente = this.utenteService.findById(UUID.fromString(id));
 
-       Authentication authentication = new UsernamePasswordAuthenticationToken(currentCliente, null, currentClienti.getAuthorities());
+       Authentication authentication = new UsernamePasswordAuthenticationToken(currentCliente, null, currentCliente.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication); // <-- Associo l'utente autenticato (Autentication) al Context
 
         filterChain.doFilter(request, response);
