@@ -25,7 +25,7 @@ public class MailgunSender {
                 .queryString("from", this.email)
                 .queryString("to", recipient.getEmail())
                 .queryString("subject", "Registrazione completata")
-                .queryString("text", "Ciao " + recipient.getName() + ", grazie per esserti registrato!")
+                .queryString("text", "Ciao " + recipient.getNome() + ", grazie per esserti registrato!")
                 .asJson();
         System.out.println(response.getBody());
     }

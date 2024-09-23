@@ -1,12 +1,14 @@
 package kassandrafalsitta.bw2.services;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import kassandrafalsitta.bw2.entities.Cliente;
 import kassandrafalsitta.bw2.enums.Ruolo;
 import kassandrafalsitta.bw2.exceptions.BadRequestException;
 import kassandrafalsitta.bw2.exceptions.NotFoundException;
 import kassandrafalsitta.bw2.payloads.ClientiDTO;
 import kassandrafalsitta.bw2.payloads.ClientiRuoloDTO;
-import kassandrafalsitta.bw2.repositories.ClientisRepository;
+import kassandrafalsitta.bw2.repositories.ClientiRepository;
 import kassandrafalsitta.bw2.tools.MailgunSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,18 +17,26 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
 @Service
 public class ClientiService {
     @Autowired
-    private ClientisRepository clientiRepository;
+    private ClientiRepository clientiRepository;
     @Autowired
     private PasswordEncoder bcrypt;
 
     @Autowired
     private MailgunSender mailgunSender;
+
+
+    @Autowired
+    private Cloudinary cloudinaryUploader;
 
 
     public Page<Cliente> findAll(int page, int size, String sortBy) {
@@ -37,34 +47,89 @@ public class ClientiService {
 
     public Cliente saveClienti(ClientiDTO body) {
         this.clientiRepository.findByEmail(body.email()).ifPresent(
-                employee -> {
+                clienti -> {
                     throw new BadRequestException("L'email " + body.email() + " è già in uso!");
                 }
         );
-        Cliente employee = new Cliente(body.username(), body.name(), body.surname(), body.email(), bcrypt.encode(body.password()));
-        Cliente savedCliente = this.clientiRepository.save(employee);
+
+        LocalDate dataInserimento = null;
+        try {
+            dataInserimento = LocalDate.parse(body.dataInserimento());
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + body.dataInserimento() + " inserire nel seguente formato: AAAA/MM/GG");
+        }
+        LocalDate dataUltimoContatto = null;
+        try {
+            dataUltimoContatto = LocalDate.parse(body.dataUltimoContatto());
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + body.dataUltimoContatto() + " inserire nel seguente formato: AAAA/MM/GG");
+        }
+        Cliente cliente = new Cliente(
+                body.username(),
+                body.nome(),
+                body.cognome(),
+                body.email(),
+                bcrypt.encode(body.password()),
+                Long.parseLong(body.partitaIva()),
+                dataInserimento,
+                dataUltimoContatto,
+                Integer.parseInt(body.fatturatoAnnuale()),
+                body.pec(),
+                Long.parseLong(body.telefono()),
+                body.emailDiContatto(),
+                body.nomeDiContatto(),
+                body.cognomeDiContatto(),
+                Long.parseLong(body.telefonoDiContatto()),
+                body.logoAziendale(),
+                body.tipoClienti());
+        Cliente savedClienti = this.clientiRepository.save(cliente);
 
         // 4. Invio email conferma registrazione
-        mailgunSender.sendRegistrationEmail(savedCliente);
-        return savedCliente;
+        mailgunSender.sendRegistrationEmail(savedClienti);
+        return savedClienti ;
     }
 
-    public Cliente findById(UUID employeeId) {
-        return this.clientiRepository.findById(employeeId).orElseThrow(() -> new NotFoundException(employeeId));
+    public Cliente findById(UUID clientiId) {
+        return this.clientiRepository.findById(clientiId).orElseThrow(() -> new NotFoundException(clientiId));
     }
 
-    public Cliente findByIdAndUpdate(UUID employeeId, ClientiDTO updatedClienti) {
-        Cliente found = findById(employeeId);
-        found.setClientiname(updatedClienti.username());
-        found.setName(updatedClienti.name());
-        found.setSurname(updatedClienti.surname());
+    public Cliente findByIdAndUpdate(UUID clientiId, ClientiDTO updatedClienti) {
+        Cliente found = findById(clientiId);
+        found.setUsername(updatedClienti.username());
+        found.setNome(updatedClienti.nome());
+        found.setCognome(updatedClienti.cognome());
         found.setEmail(updatedClienti.email());
         found.setPassword(updatedClienti.password());
+        LocalDate dataInserimento = null;
+        try {
+            dataInserimento = LocalDate.parse(updatedClienti.dataInserimento());
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + updatedClienti.dataInserimento() + " inserire nel seguente formato: AAAA/MM/GG");
+        }
+
+        found.setDataInserimento(dataInserimento);
+        LocalDate dataUltimoContatto = null;
+        try {
+            dataUltimoContatto = LocalDate.parse(updatedClienti.dataUltimoContatto());
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + updatedClienti.dataUltimoContatto() + " inserire nel seguente formato: AAAA/MM/GG");
+        }
+        found.setDataUltimoContatto(dataUltimoContatto);
+        found.setPartitaIva(Long.parseLong(updatedClienti.partitaIva() + "L"));
+        found.setFatturatoAnnuale( Integer.parseInt(updatedClienti.fatturatoAnnuale()));
+        found.setPec(updatedClienti.pec());
+        found.setTelefono(Long.parseLong(updatedClienti.telefono() + "L"));
+        found.setEmailDiContatto(updatedClienti.emailDiContatto());
+        found.setNomeDiContatto(updatedClienti.nomeDiContatto());
+        found.setCognomeDiContatto(updatedClienti.cognomeDiContatto());
+        found.setTelefonoDiContatto(Long.parseLong(updatedClienti.telefonoDiContatto() + "L"));
+        found.setLogoAziendale(updatedClienti.logoAziendale());
+        found.setTipoClienti(updatedClienti.tipoClienti());
         return this.clientiRepository.save(found);
     }
 
-    public Cliente findByIdAndUpdateRuolo(UUID employeeId, ClientiRuoloDTO updatedClientiRuolo) {
-        Cliente found = findById(employeeId);
+    public Cliente findByIdAndUpdateRuolo(UUID clientiId, ClientiRuoloDTO updatedClientiRuolo) {
+        Cliente found = findById(clientiId);
         Ruolo ruolo = null;
         try {
             ruolo = Ruolo.valueOf(updatedClientiRuolo.ruolo());
@@ -75,12 +140,19 @@ public class ClientiService {
         return this.clientiRepository.save(found);
     }
 
-    public void findByIdAndDelete(UUID employeeId) {
-        this.clientiRepository.delete(this.findById(employeeId));
+    public void findByIdAndDelete(UUID clientiId) {
+        this.clientiRepository.delete(this.findById(clientiId));
     }
 
 
     public Cliente findByEmail(String email) {
         return clientiRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("L'utente con l'email " + email + " non è stato trovato!"));
+    }
+
+    public Cliente uploadImage(UUID authorId, MultipartFile file) throws IOException {
+        Cliente found = findById(authorId);
+        String avatar = (String) cloudinaryUploader.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
+        found.setAvatar(avatar);
+        return this.clientiRepository.save(found);
     }
 }

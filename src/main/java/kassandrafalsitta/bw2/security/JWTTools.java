@@ -15,11 +15,11 @@ public class JWTTools {
     @Value("${jwt.secret}")
     private String secret;
 
-    public String createToken(Cliente cliente) {
+    public String createToken(Cliente clienti) {
         return Jwts.builder()
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 3))
-                .subject(String.valueOf(cliente.getId()))
+                .subject(String.valueOf(clienti.getId()))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
     }
