@@ -18,7 +18,7 @@ import java.util.UUID;
 public class Fattura {
     @Id
     @Setter(AccessLevel.NONE)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     UUID id;
 
     private LocalDate data;
