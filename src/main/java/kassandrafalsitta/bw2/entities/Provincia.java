@@ -1,28 +1,31 @@
 package kassandrafalsitta.bw2.entities;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import java.util.List;
 import java.util.UUID;
 
 @Entity
+@Table(name = "province")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @ToString
-@Table(name = "province")
-
+@NoArgsConstructor
 public class Provincia {
+
     @Id
-    @Setter(AccessLevel.NONE)
     @GeneratedValue
-    UUID id;
+
+    private UUID id;
 
     private String nome;
     private String sigla;
+    private String regione;
 
-    @OneToMany(mappedBy = "provincia")
-    private List<Comune> comuni;
 }
