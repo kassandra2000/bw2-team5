@@ -173,11 +173,11 @@ public List<Cliente> getClientiOrdinePerNome(){
     }
 
     public List<Cliente> getClientiOrdinePerDataUltimoContatto(){
-        return clientiRepository.findByUltimoContatto();
+        return clientiRepository.findByDataUltimoContatto();
     }
 
     public List<Cliente> getClientiOrdinePerProvinciaSedeLegale(){
-        return clientiRepository.findByProvinciaSedeLegale();
+        return clientiRepository.filterByProvinciaSedeLegale();
     }
 
     public List<Cliente> getClientiFiltraPerNome(String nome){

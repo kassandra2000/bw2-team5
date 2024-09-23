@@ -24,10 +24,10 @@ public interface ClientiRepository extends JpaRepository<Cliente, UUID> {
     List<Cliente> findByDataInserimento();
 
     //Ordinamento per data di ultimo contatto
-    List<Cliente> findByUltimoContatto();
+    List<Cliente> findByDataUltimoContatto();
 
     //Ordinamento per provincia della sede legale
-    List<Cliente> findByProvinciaSedeLegale();
+    List<Cliente> findByIndirizzo_TipoDiIndirizzo();
 
     //Filtro per nome
     List<Cliente> filterByNome(String nome);
