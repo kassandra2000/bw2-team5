@@ -68,28 +68,4 @@ public class FatturaController {
         fattureService.findByIdAndDelete(reservationId);
     }
 
-    @GetMapping("/ricerca")
-    public List<Fattura> getFatture(
-            @RequestParam(required = false) Cliente cliente,
-            @RequestParam(required = false) String stato,
-            @RequestParam(required = false) LocalDate data,
-            @RequestParam(required = false) LocalDate startDate,
-            @RequestParam(required = false) LocalDate endDate,
-            @RequestParam(required = false) LocalDate anno,
-            @RequestParam(required = false) BigDecimal minimo,
-            @RequestParam(required = false) BigDecimal massimo) {
-        if (cliente != null) {
-            return fattureService.findByCliente(cliente);
-        } else if (stato != null && !stato.isEmpty()) {
-            return fattureService.getFattureFiltraPerStato(stato);
-        } else if (data != null) {
-            return fattureService.getFattureFiltraPerData(data);
-        } else if (anno != null) {
-            return fattureService.getFattureFiltraPerAnno(startDate, endDate);
-        } else if (minimo != null && massimo != null) {
-            return fattureService.getFattureFiltraPerRangeImporti(minimo, massimo);
-        } else {
-            return fattureService.getFattureFiltraPerAnno(LocalDate.now().getYear());
-        }
-    }
 }
