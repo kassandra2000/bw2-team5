@@ -30,17 +30,17 @@ public interface ClientiRepository extends JpaRepository<Cliente, UUID> {
     List<Cliente> findByIndirizzo_TipoDiIndirizzo();
 
     //Filtro per nome
-    List<Cliente> filterByNome(String nome);
+    List<Cliente> findByNome(String nome);
 
     //Filtro per Fatturato annuale
-    List<Cliente> filterByFatturatoAnnuale(BigDecimal minimo, BigDecimal massimo);
+    List<Cliente> findByFatturatoAnnuale(BigDecimal minimo, BigDecimal massimo);
 
     //Filtro per data di inserimento
-    List<Cliente> filterByDataInserimento(LocalDate startDate, LocalDate endDate);
+    List<Cliente> findByDataInserimento(LocalDate startDate, LocalDate endDate);
 
     //Filtro per data di ultimo contatto
-    List<Cliente> filterByUltimoContatto(LocalDate startDate, LocalDate endDate);
+    List<Cliente> findByUltimoContatto(LocalDate startDate, LocalDate endDate);
 
     //Filtro per provincia della sede legale
-    List<Cliente> filterByProvinciaSedeLegale();
+    List<Cliente> findByProvinciaSedeLegale();
 }

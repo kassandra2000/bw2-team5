@@ -101,19 +101,19 @@ public class FattureService {
     }
 
     public List<Fattura> getFattureFiltraPerStato(String stato){
-        return fattureRepository.filterByStato(stato);
+        return fattureRepository.findByStato(stato);
     }
 
     public List<Fattura> getFattureFiltraPerData(LocalDate data){
-        return fattureRepository.filterByData(data);
+        return fattureRepository.findByData(data);
     }
 
     public List<Fattura> getFattureFiltraPerAnno(LocalDate startDate, LocalDate endDate){
-        return fattureRepository.filterByAnno(startDate, endDate);
+        return fattureRepository.findByAnno(startDate, endDate);
     }
 
     public List<Fattura> getFattureFiltraPerRangeImporti(BigDecimal minimo, BigDecimal massimo){
-        return fattureRepository.filterByRangeImporto(minimo, massimo);
+        return fattureRepository.findByRangeImporto(minimo, massimo);
     }
 
 }

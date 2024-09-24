@@ -17,12 +17,12 @@ public interface FattureRepository extends JpaRepository<Fattura, UUID> {
     Optional<Fattura> findByNumeroAndCliente(String numero,Cliente cliente);
 
     //filtro fatture per stato
-    List<Fattura> filterByStato(String stato);
+    List<Fattura> findByStato(String stato);
     //filtro fatture per data
-    List<Fattura> filterByData(LocalDate data);
+    List<Fattura> findByData(LocalDate data);
     //filtro fatture per anno
-    List<Fattura> filterByAnno(LocalDate startDate, LocalDate endDate);
+    List<Fattura> findByAnno(LocalDate startDate, LocalDate endDate);
     //filtro fatture per range di importi
-    List<Fattura> filterByRangeImporto(BigDecimal minimo, BigDecimal massimo);
+    List<Fattura> findByRangeImporto(BigDecimal minimo, BigDecimal massimo);
 }
 

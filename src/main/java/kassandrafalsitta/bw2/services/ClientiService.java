@@ -177,27 +177,27 @@ public List<Cliente> getClientiOrdinePerNome(){
     }
 
     public List<Cliente> getClientiOrdinePerProvinciaSedeLegale(){
-        return clientiRepository.filterByProvinciaSedeLegale();
+        return clientiRepository.findByProvinciaSedeLegale();
     }
 
     public List<Cliente> getClientiFiltraPerNome(String nome){
-        return clientiRepository.filterByNome(nome);
+        return clientiRepository.findByNome(nome);
     }
 
     public List<Cliente> getClientiFiltraPerFatturatoAnnuale(BigDecimal minimo, BigDecimal massimo){
-        return clientiRepository.filterByFatturatoAnnuale(minimo, massimo);
+        return clientiRepository.findByFatturatoAnnuale(minimo, massimo);
     }
 
     public List<Cliente> getClientiFiltraPerDataInserimento(LocalDate startDate, LocalDate endDate){
-        return clientiRepository.filterByDataInserimento(startDate, endDate);
+        return clientiRepository.findByDataInserimento(startDate, endDate);
     }
 
     public List<Cliente> getClientiFiltraPerUltimoContatto(LocalDate startDate, LocalDate endDate){
-        return clientiRepository.filterByUltimoContatto(startDate, endDate);
+        return clientiRepository.findByUltimoContatto(startDate, endDate);
     }
 
     public List<Cliente> getClientiFiltraPerProvinciaSedeLegale(){
-        return clientiRepository.filterByProvinciaSedeLegale();
+        return clientiRepository.findByProvinciaSedeLegale();
     }
 
 }
