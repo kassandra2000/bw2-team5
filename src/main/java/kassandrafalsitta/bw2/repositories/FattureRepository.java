@@ -14,15 +14,8 @@ import java.util.UUID;
 @Repository
 public interface FattureRepository extends JpaRepository<Fattura, UUID> {
     List<Fattura> findByCliente(Cliente cliente);
-    Optional<Fattura> findByNumeroAndCliente(String numero,Cliente cliente);
 
-    //filtro fatture per stato
-    List<Fattura> findByStato(String stato);
-    //filtro fatture per data
-    List<Fattura> findByData(LocalDate data);
-    //filtro fatture per anno
-    List<Fattura> findByAnno(LocalDate startDate, LocalDate endDate);
-    //filtro fatture per range di importi
-    List<Fattura> findByRangeImporto(BigDecimal minimo, BigDecimal massimo);
+    Optional<Fattura> findByNumeroAndCliente(String numero, Cliente cliente);
+
 }
 

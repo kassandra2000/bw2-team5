@@ -14,33 +14,4 @@ import java.util.UUID;
 public interface ClientiRepository extends JpaRepository<Cliente, UUID> {
     Optional<Cliente> findByEmail(String email);
 
-    //Ordinamento per Nome
-    List<Cliente> findbyNome();
-
-    //Ordinamento per fatturato annuale
-    List<Cliente> findByFatturatoAnnuale();
-
-    //Ordinamento per data di inserimento
-    List<Cliente> findByDataInserimento();
-
-    //Ordinamento per data di ultimo contatto
-    List<Cliente> findByDataUltimoContatto();
-
-    //Ordinamento per provincia della sede legale
-    List<Cliente> findByIndirizzo_TipoDiIndirizzo();
-
-    //Filtro per nome
-    List<Cliente> findByNome(String nome);
-
-    //Filtro per Fatturato annuale
-    List<Cliente> findByFatturatoAnnuale(BigDecimal minimo, BigDecimal massimo);
-
-    //Filtro per data di inserimento
-    List<Cliente> findByDataInserimento(LocalDate startDate, LocalDate endDate);
-
-    //Filtro per data di ultimo contatto
-    List<Cliente> findByUltimoContatto(LocalDate startDate, LocalDate endDate);
-
-    //Filtro per provincia della sede legale
-    List<Cliente> findByProvinciaSedeLegale();
 }
