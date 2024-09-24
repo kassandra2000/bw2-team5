@@ -167,15 +167,15 @@ public class ClientiService {
 
 
     public List<Cliente> getClientiOrderedByFatturatoAnnuale() {
-        return clientiRepository.findAllByOrderByFatturatoAnnualeDesc();
+        return clientiRepository.findAllByOrderByFatturatoAnnuale();
     }
 
     public List<Cliente> getClientiOrderedByDataInserimento() {
-        return clientiRepository.findAllByOrderByDataInserimentoAsc();
+        return clientiRepository.findAllByOrderByDataInserimento();
     }
 
     public List<Cliente> getClientiOrderedByDataUltimoContatto() {
-        return clientiRepository.findAllByOrderByDataUltimoContattoAsc();
+        return clientiRepository.findAllByOrderByDataUltimoContatto();
     }
 
     // Metodi per filtraggio
