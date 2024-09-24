@@ -27,18 +27,18 @@ public class ComuneService {
         List<Comune> comuni = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
+            String riga;
             br.readLine(); // Salta la prima riga del file
 
-            while ((line = br.readLine()) != null) {
-                String[] riga = line.split(";");
+            while ((riga = br.readLine()) != null) {
+                String[] casella = riga.split(";");
 
                 Comune comune = new Comune();
-                comune.setNome(riga[2]); // Imposta il nome del comune
+                comune.setNome(casella[2]); // Imposta il nome del comune
 
                 // utilizzando il nome della provincia nel file dei comuni, andiamo a cercare se esiste
                 //una provincia con lo stesso nome nella repository delle province
-                Optional<Provincia> provinciaAssociazione = provinciaRepository.findByNome(riga[3]);
+                Optional<Provincia> provinciaAssociazione = provinciaRepository.findByNome(casella[3]);
                 // se troviamo un risultato assegnamo la provincia trovata da provinciaRepository all'attributo
                 //provincia dell'istanza Comune
                 provinciaAssociazione.ifPresent(comune::setProvincia);
