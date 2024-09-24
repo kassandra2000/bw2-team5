@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -159,45 +158,40 @@ public class ClientiService {
     }
 
 
-
-public List<Cliente> getClientiOrdinePerNome(){
-        return clientiRepository.findbyNome();
+    // Metodo per ottenere tutti i clienti
+    public List<Cliente> getAllClienti() {
+        return clientiRepository.findAll();
     }
 
-    public List<Cliente> getClientiOrdinePerFatturatoAnnuale(){
-        return clientiRepository.findByFatturatoAnnuale();
+    // Metodi per ordinamento
+
+
+    public List<Cliente> getClientiOrderedByFatturatoAnnuale() {
+        return clientiRepository.findAllByOrderByFatturatoAnnualeDesc();
     }
 
-    public List<Cliente> getClientiOrdinePerDataInserimento(){
-        return clientiRepository.findByDataInserimento();
+    public List<Cliente> getClientiOrderedByDataInserimento() {
+        return clientiRepository.findAllByOrderByDataInserimentoAsc();
     }
 
-    public List<Cliente> getClientiOrdinePerDataUltimoContatto(){
-        return clientiRepository.findByDataUltimoContatto();
+    public List<Cliente> getClientiOrderedByDataUltimoContatto() {
+        return clientiRepository.findAllByOrderByDataUltimoContattoAsc();
     }
 
-    public List<Cliente> getClientiOrdinePerProvinciaSedeLegale(){
-        return clientiRepository.findByProvinciaSedeLegale();
+    // Metodi per filtraggio
+    public List<Cliente> getClientiByFatturatoAnnualeRange(Long min, Long max) {
+        return clientiRepository.findByFatturatoAnnualeBetween(min, max);
     }
 
-    public List<Cliente> getClientiFiltraPerNome(String nome){
-        return clientiRepository.findByNome(nome);
+    public List<Cliente> getClientiByDataInserimentoRange(LocalDate startDate, LocalDate endDate) {
+        return clientiRepository.findByDataInserimentoBetween(startDate, endDate);
     }
 
-    public List<Cliente> getClientiFiltraPerFatturatoAnnuale(BigDecimal minimo, BigDecimal massimo){
-        return clientiRepository.findByFatturatoAnnuale(minimo, massimo);
+    public List<Cliente> getClientiByDataUltimoContattoRange(LocalDate startDate, LocalDate endDate) {
+        return clientiRepository.findByDataUltimoContattoBetween(startDate, endDate);
     }
 
-    public List<Cliente> getClientiFiltraPerDataInserimento(LocalDate startDate, LocalDate endDate){
-        return clientiRepository.findByDataInserimento(startDate, endDate);
-    }
 
-    public List<Cliente> getClientiFiltraPerUltimoContatto(LocalDate startDate, LocalDate endDate){
-        return clientiRepository.findByUltimoContatto(startDate, endDate);
-    }
 
-    public List<Cliente> getClientiFiltraPerProvinciaSedeLegale(){
-        return clientiRepository.findByProvinciaSedeLegale();
-    }
 
 }

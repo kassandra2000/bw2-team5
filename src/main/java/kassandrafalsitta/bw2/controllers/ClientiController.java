@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -128,43 +127,27 @@ public class ClientiController {
         this.fattureService.findByIdAndDelete(userFattura.getId());
     }
 
-    @GetMapping("/filtra")
-    public List<Cliente> getClientiFiltrati(
-            @RequestParam(required = false) BigDecimal fatturatoMin,
-            @RequestParam(required = false) BigDecimal fatturatoMax,
-            @RequestParam(required = false) LocalDate dataInserimentoStart,
-            @RequestParam(required = false) LocalDate dataInserimentoEnd,
-            @RequestParam(required = false) LocalDate dataUltimoContattoStart,
-            @RequestParam(required = false) LocalDate dataUltimoContattoEnd,
-            @RequestParam(required = false) String nome ) {
-
-        if (fatturatoMin != null && fatturatoMax != null) {
-            return clientiService.getClientiFiltraPerFatturatoAnnuale(fatturatoMin, fatturatoMax);
-        } else if (dataInserimentoStart != null && dataInserimentoEnd != null) {
-            return clientiService.getClientiFiltraPerDataInserimento(dataInserimentoStart, dataInserimentoEnd);
-        } else if (dataUltimoContattoStart != null && dataUltimoContattoEnd != null) {
-            return clientiService.getClientiFiltraPerUltimoContatto(dataUltimoContattoStart, dataUltimoContattoEnd);
-        } else {
-            return clientiService.getClientiFiltraPerNome(nome);
-        }
-
+    // Endpoint per ottenere tutti i clienti
+    @GetMapping
+    public List<Cliente> getAllClientes() {
+        return clientiService.getAllClienti();
     }
 
-    @GetMapping("/ordina")
-    public List<Cliente> getClientiOrdinati(@RequestParam String param){
-        switch (param.toLowerCase()) {
-            case "nome":
-                return clientiService.getClientiOrdinePerNome();
-            case "fatturatoannuo":
-                return clientiService.getClientiOrdinePerFatturatoAnnuale();
-            case "datainserimento":
-                return clientiService.getClientiOrdinePerDataInserimento();
-            case "dataultimocontatto":
-                return clientiService.getClientiOrdinePerDataUltimoContatto();
-            case "provinciasedelegale":
-                return clientiService.getClientiOrdinePerProvinciaSedeLegale();
-            default:
-                throw new IllegalArgumentException("Campo di ordinamento non valido");
-        }
+    // Endpoint per filtrare i clienti per fatturato annuale
+    @GetMapping("/filtro/fatturato")
+    public List<Cliente> getClientesByFatturatoAnnualeRange(@RequestParam Long min,
+                                                            @RequestParam Long max) {
+        return clientiService.getClientiByFatturatoAnnualeRange(min, max);
     }
+
+    // Endpoint per filtrare i clienti per data di inserimento
+    @GetMapping("/filtro/data-inserimento")
+    public List<Cliente> getClientesByDataInserimentoRange(@RequestParam String startDate,
+                                                           @RequestParam String endDate) {
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        return clientiService.getClientiByDataInserimentoRange(start, end);
+    }
+
+
 }

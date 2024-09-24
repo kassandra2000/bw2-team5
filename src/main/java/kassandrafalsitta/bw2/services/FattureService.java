@@ -100,20 +100,20 @@ public class FattureService {
         return this.fattureRepository.findByCliente(cliente);
     }
 
-    public List<Fattura> getFattureFiltraPerStato(String stato){
+    public List<Fattura> getFattureByStato(Fattura stato) {
         return fattureRepository.findByStato(stato);
     }
 
-    public List<Fattura> getFattureFiltraPerData(LocalDate data){
+    public List<Fattura> getFattureByData(LocalDate data) {
         return fattureRepository.findByData(data);
     }
 
-    public List<Fattura> getFattureFiltraPerAnno(LocalDate startDate, LocalDate endDate){
-        return fattureRepository.findByAnno(startDate, endDate);
+    public List<Fattura> getFattureByAnno(Integer anno) {
+        return fattureRepository.findByAnno(anno);
     }
 
-    public List<Fattura> getFattureFiltraPerRangeImporti(BigDecimal minimo, BigDecimal massimo){
-        return fattureRepository.findByRangeImporto(minimo, massimo);
+    public List<Fattura> getFattureByImportoRange(Double min, Double max) {
+        return fattureRepository.findByImportoBetween(min, max);
     }
 
 }
