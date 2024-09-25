@@ -1,13 +1,9 @@
 package kassandrafalsitta.bw2.controllers;
 
 import kassandrafalsitta.bw2.entities.Cliente;
-import kassandrafalsitta.bw2.entities.Fattura;
-import kassandrafalsitta.bw2.exceptions.NotFoundException;
 import kassandrafalsitta.bw2.payloads.ClientiDTO;
 import kassandrafalsitta.bw2.payloads.ClientiRuoloDTO;
-import kassandrafalsitta.bw2.payloads.FatturaDTO;
 import kassandrafalsitta.bw2.services.ClientiService;
-import kassandrafalsitta.bw2.services.FattureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -18,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,8 +21,6 @@ import java.util.UUID;
 public class ClientiController {
     @Autowired
     private ClientiService clientiService;
-    @Autowired
-    private FattureService fattureService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -88,41 +81,5 @@ public class ClientiController {
     @PostMapping("/me/avatar")
     public Cliente uploadMyCover(@AuthenticationPrincipal Cliente currentAuthenticatedCliente, @RequestParam("avatar") MultipartFile image) throws IOException {
         return this.clientiService.uploadImage(currentAuthenticatedCliente.getId(), image);
-    }
-
-    // me/fatture
-    @GetMapping("/me/event")
-    @PreAuthorize("hasAuthority('EVENT_ORGANIZER')")
-    public List<Fattura> getProfileFattura(@AuthenticationPrincipal Cliente currentAuthenticatedCliente) {
-        return this.fattureService.findByCliente(currentAuthenticatedCliente);
-    }
-
-    @GetMapping("/me/event/{clientId}")
-    @PreAuthorize("hasAuthority('EVENT_ORGANIZER')")
-    public Fattura getProfileFatturaById(@AuthenticationPrincipal Cliente currentAuthenticatedCliente, @PathVariable UUID clientId) {
-        List<Fattura> eventList = this.fattureService.findByCliente(currentAuthenticatedCliente);
-        Fattura userFattura = eventList.stream().filter(event -> event.getId().equals(clientId)).findFirst()
-                .orElseThrow(() -> new NotFoundException(clientId));
-        return fattureService.findById(userFattura.getId());
-    }
-
-
-    @PutMapping("/me/event/{clientId}")
-    @PreAuthorize("hasAuthority('EVENT_ORGANIZER')")
-    public Fattura updateProfileFattura(@AuthenticationPrincipal Cliente currentAuthenticatedCliente, @PathVariable UUID clientId, @RequestBody FatturaDTO body) {
-        List<Fattura> eventList = this.fattureService.findByCliente(currentAuthenticatedCliente);
-        Fattura userFattura = eventList.stream().filter(event -> event.getId().equals(clientId)).findFirst()
-                .orElseThrow(() -> new NotFoundException(clientId));
-        return this.fattureService.findByIdAndUpdate(userFattura.getId(), body);
-    }
-
-    @DeleteMapping("/me/event/{clientId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAuthority('EVENT_ORGANIZER')")
-    public void deleteProfileFattura(@AuthenticationPrincipal Cliente currentAuthenticatedCliente, @PathVariable UUID clientId) {
-        List<Fattura> eventList = this.fattureService.findByCliente(currentAuthenticatedCliente);
-        Fattura userFattura = eventList.stream().filter(event -> event.getId().equals(clientId)).findFirst()
-                .orElseThrow(() -> new NotFoundException(clientId));
-        this.fattureService.findByIdAndDelete(userFattura.getId());
     }
 }
