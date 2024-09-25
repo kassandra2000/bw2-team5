@@ -185,33 +185,22 @@ public class ClientiController {
     }
 
     //ordina
-    @GetMapping("/ordina/nome")
-    public List<Cliente> ordinaClientiPerNomeAsc() {
-        return clientiService.getAllClientiByNomeAsc();
+    @GetMapping("/ordina")
+    public List<Cliente> ordinaClienti(@RequestParam String criterio) {
+        if ("nome".equalsIgnoreCase(criterio)) {
+            return clientiService.getAllClientiByNomeAsc();
+        } else if ("fatturato".equalsIgnoreCase(criterio)) {
+            return clientiService.getAllClientiByFatturatoAnnualeAsc();
+        } else if ("data-inserimento".equalsIgnoreCase(criterio)) {
+            return clientiService.getAllClientiByDataInserimentoAsc();
+        } else if ("data-ultimo-contatto".equalsIgnoreCase(criterio)) {
+            return clientiService.getAllClientiByDataUltimoContattoAsc();
+        } else if ("provincia".equalsIgnoreCase(criterio)) {
+            return clientiService.getAllClientiBySedeLegaleProvinciaAsc();
+        } else {
+            throw new BadRequestException("Criterio di ordinamento non valido: " + criterio);
+        }
     }
-
-    // Ordinare i clienti per fatturato annuale ascendente
-    @GetMapping("/ordina/fatturato")
-    public List<Cliente> ordinaClientiPerFatturatoAnnualeAsc() {
-        return clientiService.getAllClientiByFatturatoAnnualeAsc();
-    }
-
-    // Ordinare i clienti per data di inserimento ascendente
-    @GetMapping("/ordina/data-inserimento")
-    public List<Cliente> ordinaClientiPerDataInserimentoAsc() {
-        return clientiService.getAllClientiByDataInserimentoAsc();
-    }
-
-    // Ordinare i clienti per data di ultimo contatto ascendente
-    @GetMapping("/ordina/data-ultimo-contatto")
-    public List<Cliente> ordinaClientiPerDataUltimoContattoAsc() {
-        return clientiService.getAllClientiByDataUltimoContattoAsc();
-    }
-
-    // Ordinare i clienti per provincia della sede legale ascendente
-    @GetMapping("/ordina/provincia")
-    public List<Cliente> ordinaClientiPerProvinciaAsc() {
-        return clientiService.getAllClientiBySedeLegaleProvinciaAsc();
-    }
-
 }
+
+
