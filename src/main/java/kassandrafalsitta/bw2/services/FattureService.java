@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -57,6 +56,12 @@ public class FattureService {
             throw new BadRequestException("Il formato della data non è valido: " + body.dataFattura() + " inserire nel seguente formato: AAAA/MM/GG");
         }
         Fattura fattura = new Fattura(dataFattura, body.importo(), body.numero(), body.statoFattura(), cliente);
+        int annoFattura = dataFattura.getYear();
+        List<Fattura> fattureAnnuali = fattureRepository.findByAnno(annoFattura);
+        int totaleFatturatoAnnuale = fattureAnnuali.stream()
+                .mapToInt(fatturato -> (int) fatturato.getImporto())
+                .sum();
+        cliente.setFatturatoAnnuale(totaleFatturatoAnnuale);
         return this.fattureRepository.save(fattura);
 
     }
@@ -71,6 +76,7 @@ public class FattureService {
             clienteID = UUID.fromString(updatedFattura.clienteID());
         } catch (NumberFormatException e) {
             throw new BadRequestException("L'UUID dell' utente non è corretto");
+
         }
 
         Fattura found = findById(fatturaId);
@@ -88,6 +94,12 @@ public class FattureService {
         }
         found.setDataFattura(dataFattura);
         found.setStatoFattura(updatedFattura.statoFattura());
+        int annoFattura = dataFattura.getYear();
+        List<Fattura> fattureAnnuali = fattureRepository.findByAnno(annoFattura);
+        int totaleFatturatoAnnuale = fattureAnnuali.stream()
+                .mapToInt(fatturato -> (int) fatturato.getImporto())
+                .sum();
+        cliente.setFatturatoAnnuale(totaleFatturatoAnnuale);
         return this.fattureRepository.save(found);
     }
 
@@ -100,20 +112,33 @@ public class FattureService {
         return this.fattureRepository.findByCliente(cliente);
     }
 
-    public List<Fattura> getFattureFiltraPerStato(String stato){
-        return fattureRepository.filterByStato(stato);
+    public List<Fattura> findByClienteId(String id) {
+        UUID clienteId = null;
+        try {
+            clienteId = UUID.fromString(id);
+        } catch (NumberFormatException e) {
+            throw new BadRequestException("L'UUID del cliente non è corretto");
+        }
+        return this.fattureRepository.findByClienteId(clienteId);
     }
 
-    public List<Fattura> getFattureFiltraPerData(LocalDate data){
-        return fattureRepository.filterByData(data);
+    public List<Fattura> getFattureByStato(String stato) {
+        return fattureRepository.findByStatoFattura(stato);
     }
 
-    public List<Fattura> getFattureFiltraPerAnno(LocalDate startDate, LocalDate endDate){
-        return fattureRepository.filterByAnno(startDate, endDate);
+    public List<Fattura> getFattureByData(LocalDate data) {
+        return fattureRepository.findByDataFattura(data);
     }
 
-    public List<Fattura> getFattureFiltraPerRangeImporti(BigDecimal minimo, BigDecimal massimo){
-        return fattureRepository.filterByRangeImporto(minimo, massimo);
+
+    public List<Fattura> getFattureByAnno(int anno) {
+      return fattureRepository.findByAnno(anno);
+    }
+
+
+
+    public List<Fattura> getFattureByImportoRange(Double min, Double max) {
+        return fattureRepository.findByImportoBetween(min, max);
     }
 
 }

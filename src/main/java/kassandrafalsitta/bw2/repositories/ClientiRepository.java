@@ -4,7 +4,6 @@ import kassandrafalsitta.bw2.entities.Cliente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -14,33 +13,22 @@ import java.util.UUID;
 public interface ClientiRepository extends JpaRepository<Cliente, UUID> {
     Optional<Cliente> findByEmail(String email);
 
-    //Ordinamento per Nome
-    List<Cliente> findbyNome();
+    // Ordinamento per fatturato annuale
+    List<Cliente> findAllByFatturatoAnnuale(int fatturatoAnnuale);
 
-    //Ordinamento per fatturato annuale
-    List<Cliente> findByFatturatoAnnuale();
+    // Ordinamento per data di inserimento
+    List<Cliente> findAllByDataInserimento(LocalDate dataInserimento);
 
-    //Ordinamento per data di inserimento
-    List<Cliente> findByDataInserimento();
+    // Ordinamento per data di ultimo contatto
+    List<Cliente> findAllByDataUltimoContatto(LocalDate dataUltimoContatto);
 
-    //Ordinamento per data di ultimo contatto
-    List<Cliente> findByUltimoContatto();
+    // Filtraggio per fatturato annuale (range)
+    List<Cliente> findByFatturatoAnnualeBetween(Long min, Long max);
 
-    //Ordinamento per provincia della sede legale
-    List<Cliente> findByProvinciaSedeLegale();
+    // Filtraggio per data di inserimento
+    List<Cliente> findByDataInserimentoBetween(LocalDate startDate, LocalDate endDate);
 
-    //Filtro per nome
-    List<Cliente> filterByNome(String nome);
+    // Filtraggio per data di ultimo contatto
+    List<Cliente> findByDataUltimoContattoBetween(LocalDate startDate, LocalDate endDate);
 
-    //Filtro per Fatturato annuale
-    List<Cliente> filterByFatturatoAnnuale(BigDecimal minimo, BigDecimal massimo);
-
-    //Filtro per data di inserimento
-    List<Cliente> filterByDataInserimento(LocalDate startDate, LocalDate endDate);
-
-    //Filtro per data di ultimo contatto
-    List<Cliente> filterByUltimoContatto(LocalDate startDate, LocalDate endDate);
-
-    //Filtro per provincia della sede legale
-    List<Cliente> filterByProvinciaSedeLegale();
 }

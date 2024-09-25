@@ -2,9 +2,11 @@ package kassandrafalsitta.bw2.controllers;
 
 import kassandrafalsitta.bw2.entities.Cliente;
 import kassandrafalsitta.bw2.entities.Fattura;
+import kassandrafalsitta.bw2.exceptions.BadRequestException;
 import kassandrafalsitta.bw2.exceptions.NotFoundException;
 import kassandrafalsitta.bw2.payloads.ClientiDTO;
 import kassandrafalsitta.bw2.payloads.ClientiRuoloDTO;
+import kassandrafalsitta.bw2.payloads.ClientiUpdateDTO;
 import kassandrafalsitta.bw2.payloads.FatturaDTO;
 import kassandrafalsitta.bw2.services.ClientiService;
 import kassandrafalsitta.bw2.services.FattureService;
@@ -18,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,7 +49,7 @@ public class ClientiController {
 
     @PutMapping("/{userId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public Cliente findClienteByIdAndUpdate(@PathVariable UUID userId, @RequestBody @Validated ClientiDTO body) {
+    public Cliente findClienteByIdAndUpdate(@PathVariable UUID userId, @RequestBody @Validated ClientiUpdateDTO body) {
         return clientiService.findByIdAndUpdate(userId, body);
     }
 
@@ -77,7 +79,7 @@ public class ClientiController {
     }
 
     @PutMapping("/me")
-    public Cliente updateProfile(@AuthenticationPrincipal Cliente currentAuthenticatedCliente, @RequestBody ClientiDTO body) {
+    public Cliente updateProfile(@AuthenticationPrincipal Cliente currentAuthenticatedCliente, @RequestBody ClientiUpdateDTO body) {
         return this.clientiService.findByIdAndUpdate(currentAuthenticatedCliente.getId(), body);
     }
 
@@ -128,43 +130,81 @@ public class ClientiController {
         this.fattureService.findByIdAndDelete(userFattura.getId());
     }
 
-    @GetMapping("/filtra")
-    public List<Cliente> getClientiFiltrati(
-            @RequestParam(required = false) BigDecimal fatturatoMin,
-            @RequestParam(required = false) BigDecimal fatturatoMax,
-            @RequestParam(required = false) LocalDate dataInserimentoStart,
-            @RequestParam(required = false) LocalDate dataInserimentoEnd,
-            @RequestParam(required = false) LocalDate dataUltimoContattoStart,
-            @RequestParam(required = false) LocalDate dataUltimoContattoEnd,
-            @RequestParam(required = false) String nome ) {
-
-        if (fatturatoMin != null && fatturatoMax != null) {
-            return clientiService.getClientiFiltraPerFatturatoAnnuale(fatturatoMin, fatturatoMax);
-        } else if (dataInserimentoStart != null && dataInserimentoEnd != null) {
-            return clientiService.getClientiFiltraPerDataInserimento(dataInserimentoStart, dataInserimentoEnd);
-        } else if (dataUltimoContattoStart != null && dataUltimoContattoEnd != null) {
-            return clientiService.getClientiFiltraPerUltimoContatto(dataUltimoContattoStart, dataUltimoContattoEnd);
-        } else {
-            return clientiService.getClientiFiltraPerNome(nome);
-        }
-
+    // Endpoint per ottenere tutti i clienti
+    @GetMapping("/cerca")
+    public List<Cliente> getAllClienti() {
+        return clientiService.getAllClienti();
     }
 
-    @GetMapping("/ordina")
-    public List<Cliente> getClientiOrdinati(@RequestParam String param){
-        switch (param.toLowerCase()) {
-            case "nome":
-                return clientiService.getClientiOrdinePerNome();
-            case "fatturatoannuo":
-                return clientiService.getClientiOrdinePerFatturatoAnnuale();
-            case "datainserimento":
-                return clientiService.getClientiOrdinePerDataInserimento();
-            case "dataultimocontatto":
-                return clientiService.getClientiOrdinePerDataUltimoContatto();
-            case "provinciasedelegale":
-                return clientiService.getClientiOrdinePerProvinciaSedeLegale();
-            default:
-                throw new IllegalArgumentException("Campo di ordinamento non valido");
-        }
+    // Endpoint per filtrare i clienti per fatturato annuale
+    @GetMapping("/fatturato")
+    public List<Cliente> getClientiByFatturatoAnnualeRange(@RequestParam Long min,
+                                                            @RequestParam Long max) {
+        return clientiService.getClientiByFatturatoAnnualeRange(min, max);
     }
+
+    // Endpoint per filtrare i clienti per data di inserimento - TESTATO
+    @GetMapping("/dataInserimento")
+    public List<Cliente> getClientiByDataInserimentoRange(@RequestParam String startDate,
+                                                           @RequestParam String endDate) {
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        return clientiService.getClientiByDataInserimentoRange(start, end);
+    }
+
+    // Endpoint per filtrare i clienti per data ultimo contatto - TESTATO
+    @GetMapping("/dataUltimoContatto")
+    public List<Cliente> getClientiByDataUltimoContattoRange(@RequestParam String startDate1,
+                                                             @RequestParam String endDate1){
+        LocalDate start = null;
+        try {
+            start = LocalDate.parse(startDate1);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + startDate1 + " inserire nel seguente formato: AAAA/MM/GG");
+        }LocalDate end = null;
+        try {
+            end = LocalDate.parse(endDate1);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + endDate1 + " inserire nel seguente formato: AAAA/MM/GG");
+        }
+        return clientiService.getClientiByDataUltimoContattoRange(start,end);
+    }
+
+    //Endpoint per ordinare i clienti secondo il fatturato annuale
+
+    @GetMapping("/ordinaFatturato")
+    public List<Cliente> getClientiByFatturatoAnnuale(@RequestParam int fatturatoAnnuale){
+        return clientiService.getClientiByFatturatoAnnuale(fatturatoAnnuale);
+    }
+
+    //Endpoint per ordinare i clienti secondo data inserimento
+
+    @GetMapping("/ordinaDataInserimento")
+    public List<Cliente> getClientiByDataInserimento(@RequestParam String dataInserimento){
+        LocalDate start = null;
+        try {
+            start = LocalDate.parse(dataInserimento);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + dataInserimento + " inserire nel seguente formato: AAAA/MM/GG");
+        }
+        return clientiService.getClientiByDataInserimento(start);
+    }
+
+    //Endpoint per ordinare i clienti secondo data ultimo contatto
+
+    @GetMapping("/ordinaDataUltimoContatto")
+    public List<Cliente> getClientiByDataUltimoContatto(@RequestParam String dataUltimoContatto){
+        LocalDate start = null;
+        try {
+            start = LocalDate.parse(dataUltimoContatto);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + dataUltimoContatto + " inserire nel seguente formato: AAAA/MM/GG");
+        }
+        return clientiService.getClientiByDataUltimoContatto(start);
+    }
+
+
+
+
+
 }

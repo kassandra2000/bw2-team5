@@ -5,6 +5,7 @@ import kassandrafalsitta.bw2.entities.Fattura;
 import kassandrafalsitta.bw2.exceptions.BadRequestException;
 import kassandrafalsitta.bw2.payloads.FatturaDTO;
 import kassandrafalsitta.bw2.payloads.FatturaRespDTO;
+import kassandrafalsitta.bw2.services.ClientiService;
 import kassandrafalsitta.bw2.services.FattureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -15,9 +16,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -26,6 +28,9 @@ import java.util.stream.Collectors;
 public class FatturaController {
     @Autowired
     private FattureService fattureService;
+    @Autowired
+    private ClientiService clientiService;
+
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -49,23 +54,57 @@ public class FatturaController {
         }
     }
 
-    @GetMapping("/{reservationId}")
+
+    @PutMapping("/{clienteId3}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public Fattura getFatturaById(@PathVariable UUID reservationId) {
-        return fattureService.findById(reservationId);
+    public Fattura findFatturaByIdAndUpdate(@PathVariable UUID clienteId, @RequestBody @Validated FatturaDTO body) {
+        return fattureService.findByIdAndUpdate(clienteId, body);
     }
 
-    @PutMapping("/{reservationId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public Fattura findFatturaByIdAndUpdate(@PathVariable UUID reservationId, @RequestBody @Validated FatturaDTO body) {
-        return fattureService.findByIdAndUpdate(reservationId, body);
-    }
-
-    @DeleteMapping("/{reservationId}")
+    @DeleteMapping("/{clienteId2}")
     @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void findFatturaByIdAndDelete(@PathVariable UUID reservationId) {
-        fattureService.findByIdAndDelete(reservationId);
+    public void findFatturaByIdAndDelete(@PathVariable UUID clienteId) {
+        fattureService.findByIdAndDelete(clienteId);
     }
 
+    // Endpoint per filtrare le fatture per cliente id - TESTATO
+    @GetMapping("/{clienteId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public List<Fattura> getFattureByCliente(@PathVariable UUID clienteId) {
+        Cliente cliente = clientiService.findById(clienteId);
+        return fattureService.findByCliente(cliente);
+    }
+
+   @GetMapping("/filtro")
+   @PreAuthorize("hasAuthority('ADMIN')")
+   public List<Fattura> getFattureByFiltro(@RequestParam Map<String, String> queryParams) {
+       if (queryParams.size() == 1) {
+           if (queryParams.containsKey("stato")) {
+               String stato = queryParams.get("stato");
+               return fattureService.getFattureByStato(stato);
+           } else if (queryParams.containsKey("data")) {
+               LocalDate data = LocalDate.parse(queryParams.get("data"));
+               return fattureService.getFattureByData(data);
+           } else {
+               throw new BadRequestException("Parametro non valido per la ricerca singola");
+           }
+       }
+       // Se sono stati passati due parametri
+       else if (queryParams.size() == 2) {
+           if (queryParams.containsKey("min") && queryParams.containsKey("max")) {
+               Double min = Double.valueOf(queryParams.get("min"));
+               Double max = Double.valueOf(queryParams.get("max"));
+               return fattureService.getFattureByImportoRange(min, max);
+           } else {
+               throw new BadRequestException("Coppia di parametri non valida");
+           }
+       }
+       // Se ci sono più di due parametri, restituisce un errore
+       else {
+           throw new BadRequestException("Numero di parametri non valido");
+       }
+
+
+   }
 }
