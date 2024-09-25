@@ -77,4 +77,8 @@ public class ProvinciaService {
             e.printStackTrace();
         }
     }
+
+    public boolean isProvinceTableEmpty() {
+        return provinciaRepository.count() == 0;
+    }
 }

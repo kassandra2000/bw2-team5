@@ -50,6 +50,11 @@ public class ComuneService {
             e.printStackTrace();
         }
     }
+
+    public boolean isComuniTableEmpty() {
+        return comuneRepository.count() == 0;
+    }
+
 }
 
 /*public void importComuniCSV(String filePath) {
