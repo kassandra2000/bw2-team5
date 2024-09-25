@@ -50,6 +50,12 @@ public record ClientiUpdateDTO(
         String logoAziendale,
         @NotEmpty(message = "Il tipo di clienti è obbligatorio")
         @Size(min = 1, max = 40, message = "Il tipo di clienti deve essere compreso tra 1 e 40 caratteri")
-        String tipoClienti
+        String tipoClienti,
+        @NotEmpty(message = "L'UUID della sede legale è obbligatoria")
+        @Size(min = 36, max = 36, message = "L'UUID della sede legale  deve avere 36 caratteri")
+        String sedeLegaleId,
+        @NotEmpty(message = "L'UUID della sede operativa è obbligatoria")
+        @Size(min = 36, max = 36, message = "L'UUID della sede operativa  deve avere 36 caratteri")
+        String sedeOperativaId
 ) {
 }

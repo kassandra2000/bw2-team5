@@ -51,20 +51,27 @@ public class IndirizziService {
         }
 
         Cliente cliente = clientiService.findById(clienteId);
-        List<Indirizzo> indirizzoList = indirizzoRepository.findByCliente(cliente);
+        this.indirizzoRepository.findByCliente_sedeLegale(cliente.getSedeLegale()).ifPresent(
+                clienti -> {
+                    throw new BadRequestException("La sede legalel " + cliente.getSedeLegale() + " è già in uso!");
+                }
+        );
 
-        if (indirizzoList.size()>0 & indirizzoList.size()<3){
-            Indirizzo indirizzo = new Indirizzo(
-                    body.via(),
-                    body.civico(),
-                    body.localita(),
-                    body.cap(),
-                    comune
-            );
-            return indirizzoRepository.save(indirizzo);
-        } else {
-            throw new BadRequestException("Non puoi salvare altri indirizzi per questo utente");
-        }
+        this.indirizzoRepository.findByCliente_sedeOperativa(cliente.getSedeOperativa()).ifPresent(
+                clienti -> {
+                    throw new BadRequestException("La sede operativa " + cliente.getSedeOperativa() + " è già in uso!");
+                }
+        );
+
+        Indirizzo indirizzo = new Indirizzo(
+                body.via(),
+                body.civico(),
+                body.localita(),
+                body.cap(),
+                comune
+        );
+        return indirizzoRepository.save(indirizzo);
+
 
 
     }
