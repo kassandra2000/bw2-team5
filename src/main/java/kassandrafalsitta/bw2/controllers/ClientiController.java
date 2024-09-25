@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -184,6 +182,36 @@ public class ClientiController {
         } else {
             throw new BadRequestException("Numero di parametri non valido");
         }
+    }
+
+    //ordina
+    @GetMapping("/ordina/nome")
+    public List<Cliente> ordinaClientiPerNomeAsc() {
+        return clientiService.getAllClientiByNomeAsc();
+    }
+
+    // Ordinare i clienti per fatturato annuale ascendente
+    @GetMapping("/ordina/fatturato")
+    public List<Cliente> ordinaClientiPerFatturatoAnnualeAsc() {
+        return clientiService.getAllClientiByFatturatoAnnualeAsc();
+    }
+
+    // Ordinare i clienti per data di inserimento ascendente
+    @GetMapping("/ordina/data-inserimento")
+    public List<Cliente> ordinaClientiPerDataInserimentoAsc() {
+        return clientiService.getAllClientiByDataInserimentoAsc();
+    }
+
+    // Ordinare i clienti per data di ultimo contatto ascendente
+    @GetMapping("/ordina/data-ultimo-contatto")
+    public List<Cliente> ordinaClientiPerDataUltimoContattoAsc() {
+        return clientiService.getAllClientiByDataUltimoContattoAsc();
+    }
+
+    // Ordinare i clienti per provincia della sede legale ascendente
+    @GetMapping("/ordina/provincia")
+    public List<Cliente> ordinaClientiPerProvinciaAsc() {
+        return clientiService.getAllClientiBySedeLegaleProvinciaAsc();
     }
 
 }

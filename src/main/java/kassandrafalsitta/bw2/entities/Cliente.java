@@ -2,6 +2,7 @@ package kassandrafalsitta.bw2.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +35,13 @@ public class Cliente extends Utente implements UserDetails {
     private String logoAziendale;
     private String tipoClienti;
 
-    public Cliente(String username, String nome, String cognome, String email, String password, long partitaIva, LocalDate dataInserimento, LocalDate dataUltimoContatto, String pec, long telefono, String emailDiContatto, long telefonoDiContatto, String logoAziendale, String tipoClienti) {
+    @OneToOne
+    private Indirizzo sedeLegale;
+
+    @OneToOne
+    private Indirizzo sedeOperativa;
+
+    public Cliente(String username, String nome, String cognome, String email, String password, long partitaIva, LocalDate dataInserimento, LocalDate dataUltimoContatto, String pec, long telefono, String emailDiContatto, long telefonoDiContatto, String logoAziendale, String tipoClienti, Indirizzo sedeLegale, Indirizzo sedeOperativa) {
         super(username, nome, cognome, email, password);
         this.partitaIva = partitaIva;
         this.dataInserimento = dataInserimento;
@@ -46,6 +53,8 @@ public class Cliente extends Utente implements UserDetails {
         this.telefonoDiContatto = telefonoDiContatto;
         this.logoAziendale = logoAziendale;
         this.tipoClienti = tipoClienti;
+        this.sedeLegale = sedeLegale;
+        this.sedeOperativa = sedeOperativa;
     }
 
 

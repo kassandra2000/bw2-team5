@@ -3,6 +3,8 @@ package kassandrafalsitta.bw2.services;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import kassandrafalsitta.bw2.entities.Cliente;
+import kassandrafalsitta.bw2.entities.Indirizzo;
+import kassandrafalsitta.bw2.entities.Provincia;
 import kassandrafalsitta.bw2.enums.Ruolo;
 import kassandrafalsitta.bw2.exceptions.BadRequestException;
 import kassandrafalsitta.bw2.exceptions.NotFoundException;
@@ -10,6 +12,7 @@ import kassandrafalsitta.bw2.payloads.ClientiDTO;
 import kassandrafalsitta.bw2.payloads.ClientiRuoloDTO;
 import kassandrafalsitta.bw2.payloads.ClientiUpdateDTO;
 import kassandrafalsitta.bw2.repositories.ClientiRepository;
+import kassandrafalsitta.bw2.repositories.IndirizzoRepository;
 import kassandrafalsitta.bw2.tools.MailgunSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +31,7 @@ import java.util.UUID;
 
 @Service
 public class ClientiService {
+
     @Autowired
     private ClientiRepository clientiRepository;
     @Autowired
@@ -36,9 +40,11 @@ public class ClientiService {
     @Autowired
     private MailgunSender mailgunSender;
 
-
     @Autowired
     private Cloudinary cloudinaryUploader;
+
+    @Autowired
+    private IndirizzoRepository indirizziRepository;
 
 
     public Page<Cliente> findAll(int page, int size, String sortBy) {
@@ -66,6 +72,23 @@ public class ClientiService {
         } catch (DateTimeParseException e) {
             throw new BadRequestException("Il formato della data non è valido: " + body.dataUltimoContatto() + " inserire nel seguente formato: AAAA/MM/GG");
         }
+
+        UUID sedeLegaleId;
+        try {
+            sedeLegaleId = UUID.fromString(body.sedeLegaleId());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("L'ID del sedeLegale non è valido: " + body.sedeLegaleId());
+        }
+        UUID sedeOperativaId;
+        try {
+            sedeOperativaId = UUID.fromString(body.sedeOperativaId());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("L'ID delsedeOperativa non è valido: " + body.sedeOperativaId());
+        }
+
+        Indirizzo sedeLegale = indirizziRepository.findById(sedeLegaleId) .orElseThrow(() -> new NotFoundException("Indirizzo non trovato con ID: " + body.sedeLegaleId()));;
+        Indirizzo sedeOperativa = indirizziRepository.findById(sedeOperativaId) .orElseThrow(() -> new NotFoundException("Indirizzo non trovato con ID: " + body.sedeOperativaId()));;
+
         Cliente cliente = new Cliente(
                 body.username(),
                 body.nome(),
@@ -80,7 +103,10 @@ public class ClientiService {
                 body.emailDiContatto(),
                 Long.parseLong(body.telefonoDiContatto()),
                 body.logoAziendale(),
-                body.tipoClienti());
+                body.tipoClienti(),
+                sedeLegale,
+                sedeOperativa
+        );
         Cliente savedClienti = this.clientiRepository.save(cliente);
 
         // 4. Invio email conferma registrazione
@@ -122,6 +148,22 @@ public class ClientiService {
         found.setTelefonoDiContatto(Long.parseLong(updatedClienti.telefonoDiContatto() + "L"));
         found.setLogoAziendale(updatedClienti.logoAziendale());
         found.setTipoClienti(updatedClienti.tipoClienti());
+        UUID sedeLegaleId;
+        try {
+            sedeLegaleId = UUID.fromString(updatedClienti.sedeLegaleId());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("L'ID del sedeLegale non è valido: " + updatedClienti.sedeLegaleId());
+        }
+        UUID sedeOperativaId;
+        try {
+            sedeOperativaId = UUID.fromString(updatedClienti.sedeOperativaId());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("L'ID delsedeOperativa non è valido: " + updatedClienti.sedeOperativaId());
+        }
+        Indirizzo sedeLegale = indirizziRepository.findById(sedeLegaleId) .orElseThrow(() -> new NotFoundException("Indirizzo non trovato con ID: " + updatedClienti.sedeLegaleId()));;
+        Indirizzo sedeOperativa = indirizziRepository.findById(sedeOperativaId) .orElseThrow(() -> new NotFoundException("Indirizzo non trovato con ID: " + updatedClienti.sedeOperativaId()));;
+        found.setSedeLegale(sedeLegale);
+        found.setSedeOperativa(sedeOperativa);
         return this.clientiRepository.save(found);
     }
 
@@ -225,6 +267,31 @@ public class ClientiService {
 
     public List<Cliente> getClientiByNomeParziale(String nomeParziale) {
         return clientiRepository.findByNomeContainingIgnoreCase(nomeParziale);
+    }
+
+
+    public List<Cliente> getAllClientiByNomeAsc() {
+        return clientiRepository.findAllByOrderByNomeAsc();
+    }
+
+
+    public List<Cliente> getAllClientiByFatturatoAnnualeAsc() {
+        return clientiRepository.findAllByOrderByFatturatoAnnualeAsc();
+    }
+
+
+    public List<Cliente> getAllClientiByDataInserimentoAsc() {
+        return clientiRepository.findAllByOrderByDataInserimentoAsc();
+    }
+
+
+    public List<Cliente> getAllClientiByDataUltimoContattoAsc() {
+        return clientiRepository.findAllByOrderByDataUltimoContattoAsc();
+    }
+
+
+    public List<Cliente> getAllClientiBySedeLegaleProvinciaAsc() {
+        return clientiRepository.findAllByOrderBySedeLegale_Comune_ProvinciaAsc();
     }
 
 }
