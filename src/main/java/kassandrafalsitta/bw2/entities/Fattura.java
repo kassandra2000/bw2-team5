@@ -3,7 +3,6 @@ package kassandrafalsitta.bw2.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -11,7 +10,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 @Table(name = "fatture")
 
@@ -29,4 +27,12 @@ public class Fattura {
 
     @ManyToOne
     private Cliente cliente;
+
+    public Fattura(LocalDate dataFattura, double importo, String numero, String statoFattura, Cliente cliente) {
+        this.dataFattura = dataFattura;
+        this.importo = importo;
+        this.numero = numero;
+        this.statoFattura = statoFattura;
+        this.cliente = cliente;
+    }
 }
