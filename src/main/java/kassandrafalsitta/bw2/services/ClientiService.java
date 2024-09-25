@@ -170,12 +170,24 @@ public class ClientiService {
         return clientiRepository.findAllByFatturatoAnnuale(fatturatoAnnuale);
     }
 
-    public List<Cliente> getClientiByDataInserimento(LocalDate dataInserimento) {
-        return clientiRepository.findAllByDataInserimento(dataInserimento);
+    public List<Cliente> getClientiByDataInserimento(String dataInserimento) {
+        LocalDate data  = null;
+        try {
+            data = LocalDate.parse(dataInserimento);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + dataInserimento + " inserire nel seguente formato: AAAA/MM/GG");
+        }
+        return clientiRepository.findAllByDataInserimento(data);
     }
 
-    public List<Cliente> getClientiByDataUltimoContatto(LocalDate dataUltimoContatto) {
-        return clientiRepository.findAllByDataUltimoContatto(dataUltimoContatto);
+    public List<Cliente> getClientiByDataUltimoContatto(String dataUltimoContatto) {
+        LocalDate data  = null;
+        try {
+            data = LocalDate.parse(dataUltimoContatto);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + dataUltimoContatto + " inserire nel seguente formato: AAAA/MM/GG");
+        }
+        return clientiRepository.findAllByDataUltimoContatto(data);
     }
 
     // Metodi per filtraggio
@@ -183,12 +195,36 @@ public class ClientiService {
         return clientiRepository.findByFatturatoAnnualeBetween(min, max);
     }
 
-    public List<Cliente> getClientiByDataInserimentoRange(LocalDate startDate, LocalDate endDate) {
-        return clientiRepository.findByDataInserimentoBetween(startDate, endDate);
+    public List<Cliente> getClientiByDataInserimentoRange(String startDate, String endDate) {
+        LocalDate data  = null;
+        try {
+            data = LocalDate.parse(startDate);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + startDate + " inserire nel seguente formato: AAAA/MM/GG");
+        }
+        LocalDate data1  = null;
+        try {
+            data1 = LocalDate.parse(endDate);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + endDate + " inserire nel seguente formato: AAAA/MM/GG");
+        }
+        return clientiRepository.findByDataInserimentoBetween(data, data1);
     }
 
-    public List<Cliente> getClientiByDataUltimoContattoRange(LocalDate startDate, LocalDate endDate) {
-        return clientiRepository.findByDataUltimoContattoBetween(startDate, endDate);
+    public List<Cliente> getClientiByDataUltimoContattoRange(String startDate, String endDate) {
+        LocalDate data  = null;
+        try {
+            data = LocalDate.parse(startDate);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + startDate + " inserire nel seguente formato: AAAA/MM/GG");
+        }
+        LocalDate data1  = null;
+        try {
+            data1 = LocalDate.parse(endDate);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + endDate + " inserire nel seguente formato: AAAA/MM/GG");
+        }
+        return clientiRepository.findByDataUltimoContattoBetween(data, data1);
     }
 
 

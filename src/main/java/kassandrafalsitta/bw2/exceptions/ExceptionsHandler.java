@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.LocalDateTime;
 
@@ -46,12 +47,15 @@ public class ExceptionsHandler {
         return new ErrorDTO(ex.getMessage(), LocalDateTime.now());
     }
 
-
-    /*@ExceptionHandler(AuthorizationDeniedException.class)
+    @ExceptionHandler(AuthorizationDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN) // 403
     public ErrorDTO handleForbidden(AuthorizationDeniedException ex) {
         return new ErrorDTO("Non hai i permessi per accedere", LocalDateTime.now());
     }
 
-     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST) //400
+    public ErrorDTO handleMissingPath(NoResourceFoundException ex, WebRequest request) {
+        return new ErrorDTO("devi inserire un Path corretto", LocalDateTime.now());
+    }
 }
