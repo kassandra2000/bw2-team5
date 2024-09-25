@@ -8,6 +8,7 @@ import kassandrafalsitta.bw2.exceptions.BadRequestException;
 import kassandrafalsitta.bw2.exceptions.NotFoundException;
 import kassandrafalsitta.bw2.payloads.ClientiDTO;
 import kassandrafalsitta.bw2.payloads.ClientiRuoloDTO;
+import kassandrafalsitta.bw2.payloads.ClientiUpdateDTO;
 import kassandrafalsitta.bw2.repositories.ClientiRepository;
 import kassandrafalsitta.bw2.tools.MailgunSender;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +75,6 @@ public class ClientiService {
                 Long.parseLong(body.partitaIva()),
                 dataInserimento,
                 dataUltimoContatto,
-                Integer.parseInt(body.fatturatoAnnuale()),
                 body.pec(),
                 Long.parseLong(body.telefono()),
                 body.emailDiContatto(),
@@ -94,7 +94,7 @@ public class ClientiService {
         return this.clientiRepository.findById(clientiId).orElseThrow(() -> new NotFoundException(clientiId));
     }
 
-    public Cliente findByIdAndUpdate(UUID clientiId, ClientiDTO updatedClienti) {
+    public Cliente findByIdAndUpdate(UUID clientiId, ClientiUpdateDTO updatedClienti) {
         Cliente found = findById(clientiId);
         found.setUsername(updatedClienti.username());
         found.setNome(updatedClienti.nome());

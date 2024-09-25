@@ -6,6 +6,7 @@ import kassandrafalsitta.bw2.exceptions.BadRequestException;
 import kassandrafalsitta.bw2.exceptions.NotFoundException;
 import kassandrafalsitta.bw2.payloads.ClientiDTO;
 import kassandrafalsitta.bw2.payloads.ClientiRuoloDTO;
+import kassandrafalsitta.bw2.payloads.ClientiUpdateDTO;
 import kassandrafalsitta.bw2.payloads.FatturaDTO;
 import kassandrafalsitta.bw2.services.ClientiService;
 import kassandrafalsitta.bw2.services.FattureService;
@@ -48,7 +49,7 @@ public class ClientiController {
 
     @PutMapping("/{userId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public Cliente findClienteByIdAndUpdate(@PathVariable UUID userId, @RequestBody @Validated ClientiDTO body) {
+    public Cliente findClienteByIdAndUpdate(@PathVariable UUID userId, @RequestBody @Validated ClientiUpdateDTO body) {
         return clientiService.findByIdAndUpdate(userId, body);
     }
 
@@ -78,7 +79,7 @@ public class ClientiController {
     }
 
     @PutMapping("/me")
-    public Cliente updateProfile(@AuthenticationPrincipal Cliente currentAuthenticatedCliente, @RequestBody ClientiDTO body) {
+    public Cliente updateProfile(@AuthenticationPrincipal Cliente currentAuthenticatedCliente, @RequestBody ClientiUpdateDTO body) {
         return this.clientiService.findByIdAndUpdate(currentAuthenticatedCliente.getId(), body);
     }
 
@@ -136,14 +137,14 @@ public class ClientiController {
     }
 
     // Endpoint per filtrare i clienti per fatturato annuale
-    @GetMapping("/filtro/min/max")
+    @GetMapping("/fatturato")
     public List<Cliente> getClientiByFatturatoAnnualeRange(@RequestParam Long min,
                                                             @RequestParam Long max) {
         return clientiService.getClientiByFatturatoAnnualeRange(min, max);
     }
 
-    // Endpoint per filtrare i clienti per data di inserimento
-    @GetMapping("/filtro/startDate/endDate")
+    // Endpoint per filtrare i clienti per data di inserimento - TESTATO
+    @GetMapping("/dataInserimento")
     public List<Cliente> getClientiByDataInserimentoRange(@RequestParam String startDate,
                                                            @RequestParam String endDate) {
         LocalDate start = LocalDate.parse(startDate);
@@ -151,34 +152,34 @@ public class ClientiController {
         return clientiService.getClientiByDataInserimentoRange(start, end);
     }
 
-    // Endpoint per filtrare i clienti per data ultimo contatto
-    @GetMapping("/filtro/startDate/endDate")
-    public List<Cliente> getClientiByDataUltimoContattoRange(@RequestParam String startDate,
-                                                             @RequestParam String endDate){
+    // Endpoint per filtrare i clienti per data ultimo contatto - TESTATO
+    @GetMapping("/dataUltimoContatto")
+    public List<Cliente> getClientiByDataUltimoContattoRange(@RequestParam String startDate1,
+                                                             @RequestParam String endDate1){
         LocalDate start = null;
         try {
-            start = LocalDate.parse(startDate);
+            start = LocalDate.parse(startDate1);
         } catch (DateTimeParseException e) {
-            throw new BadRequestException("Il formato della data non è valido: " + startDate + " inserire nel seguente formato: AAAA/MM/GG");
+            throw new BadRequestException("Il formato della data non è valido: " + startDate1 + " inserire nel seguente formato: AAAA/MM/GG");
         }LocalDate end = null;
         try {
-            end = LocalDate.parse(endDate);
+            end = LocalDate.parse(endDate1);
         } catch (DateTimeParseException e) {
-            throw new BadRequestException("Il formato della data non è valido: " + endDate + " inserire nel seguente formato: AAAA/MM/GG");
+            throw new BadRequestException("Il formato della data non è valido: " + endDate1 + " inserire nel seguente formato: AAAA/MM/GG");
         }
         return clientiService.getClientiByDataUltimoContattoRange(start,end);
     }
 
     //Endpoint per ordinare i clienti secondo il fatturato annuale
 
-    @GetMapping("/ordina/fatturatoAnnuale")
+    @GetMapping("/ordinaFatturato")
     public List<Cliente> getClientiByFatturatoAnnuale(@RequestParam int fatturatoAnnuale){
         return clientiService.getClientiByFatturatoAnnuale(fatturatoAnnuale);
     }
 
     //Endpoint per ordinare i clienti secondo data inserimento
 
-    @GetMapping("/ordina/dataInserimento")
+    @GetMapping("/ordinaDataInserimento")
     public List<Cliente> getClientiByDataInserimento(@RequestParam String dataInserimento){
         LocalDate start = null;
         try {
@@ -191,7 +192,7 @@ public class ClientiController {
 
     //Endpoint per ordinare i clienti secondo data ultimo contatto
 
-    @GetMapping("/ordina/dataUltimoContatto")
+    @GetMapping("/ordinaDataUltimoContatto")
     public List<Cliente> getClientiByDataUltimoContatto(@RequestParam String dataUltimoContatto){
         LocalDate start = null;
         try {

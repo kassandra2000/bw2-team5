@@ -47,9 +47,11 @@ public class ExceptionsHandler {
     }
 
 
-    @ExceptionHandler(AuthorizationDeniedException.class)
+    /*@ExceptionHandler(AuthorizationDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN) // 403
     public ErrorDTO handleForbidden(AuthorizationDeniedException ex) {
         return new ErrorDTO("Non hai i permessi per accedere", LocalDateTime.now());
     }
+
+     */
 }
