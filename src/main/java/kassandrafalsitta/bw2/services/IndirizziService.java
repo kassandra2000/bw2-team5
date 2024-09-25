@@ -1,10 +1,11 @@
 package kassandrafalsitta.bw2.services;
 
+import kassandrafalsitta.bw2.entities.Comune;
 import kassandrafalsitta.bw2.entities.Indirizzo;
 import kassandrafalsitta.bw2.exceptions.NotFoundException;
 import kassandrafalsitta.bw2.payloads.IndirizzoDTO;
 import kassandrafalsitta.bw2.repositories.ComuneRepository;
-import kassandrafalsitta.bw2.repository.IndirizzoRepository;
+import kassandrafalsitta.bw2.repositories.IndirizzoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,45 +16,67 @@ import java.util.UUID;
 public class IndirizziService {
 
     @Autowired
-    private IndirizzoRepository indirizziRepository;
+    private IndirizzoRepository indirizzoRepository;
 
     @Autowired
     private ComuneRepository comuneRepository;
 
+
     public List<Indirizzo> findAll() {
-        return indirizziRepository.findAll();
+        return indirizzoRepository.findAll();
     }
 
     public Indirizzo saveIndirizzo(IndirizzoDTO body) {
+        // Verifica che l'ID del comune sia valido e converte da String a UUID
+        UUID comuneId;
+        try {
+            comuneId = UUID.fromString(body.comuneId());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("L'ID del comune non è valido: " + body.comuneId());
+        }
+
+        Comune comune = comuneRepository.findById(comuneId)
+                .orElseThrow(() -> new NotFoundException("Comune non trovato con ID: " + comuneId));
+
         Indirizzo indirizzo = new Indirizzo(
                 body.via(),
                 body.civico(),
                 body.localita(),
                 body.cap(),
-                body.comune()
+                comune
         );
-        return indirizziRepository.save(indirizzo);
+        return indirizzoRepository.save(indirizzo);
     }
 
     public Indirizzo findById(UUID indirizzoId) {
-        return indirizziRepository.findById(indirizzoId)
-                .orElseThrow(() -> new NotFoundException(indirizzoId));
+        return indirizzoRepository.findById(indirizzoId)
+                .orElseThrow(() -> new NotFoundException("Indirizzo non trovato con ID: " + indirizzoId));
     }
 
     public Indirizzo findByIdAndUpdate(UUID indirizzoId, IndirizzoDTO updatedIndirizzo) {
-        Indirizzo found = findById(indirizzoId);
+        Indirizzo indirizzo = findById(indirizzoId);
 
-        found.setVia(updatedIndirizzo.via());
-        found.setCivico(updatedIndirizzo.civico());
-        found.setLocalita(updatedIndirizzo.localita());
-        found.setCap(updatedIndirizzo.cap());
-        found.setComune(updatedIndirizzo.comune());
+        UUID comuneId;
+        try {
+            comuneId = UUID.fromString(updatedIndirizzo.comuneId());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("L'ID del comune non è valido: " + updatedIndirizzo.comuneId());
+        }
 
-        return indirizziRepository.save(found);
+        Comune comune = comuneRepository.findById(comuneId)
+                .orElseThrow(() -> new NotFoundException("Comune non trovato con ID: " + comuneId));
+
+        indirizzo.setVia(updatedIndirizzo.via());
+        indirizzo.setCivico(updatedIndirizzo.civico());
+        indirizzo.setLocalita(updatedIndirizzo.localita());
+        indirizzo.setCap(updatedIndirizzo.cap());
+        indirizzo.setComune(comune);
+
+        return indirizzoRepository.save(indirizzo);
     }
 
     public void findByIdAndDelete(UUID indirizzoId) {
-        indirizziRepository.delete(this.findById(indirizzoId));
+        Indirizzo indirizzo = findById(indirizzoId);
+        indirizzoRepository.delete(indirizzo);
     }
 }
-

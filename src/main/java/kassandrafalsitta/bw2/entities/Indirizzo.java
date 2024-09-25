@@ -32,4 +32,7 @@ public class Indirizzo {
 
     public Indirizzo(String via, String civico, String localita, String cap, String comune) {
     }
+
+    public Indirizzo(String via, String civico, String localita, String cap, Comune comune) {
+    }
 }

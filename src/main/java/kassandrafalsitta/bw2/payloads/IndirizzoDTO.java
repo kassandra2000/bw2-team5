@@ -1,8 +1,8 @@
 package kassandrafalsitta.bw2.payloads;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import kassandrafalsitta.bw2.entities.Comune;
 
 public record IndirizzoDTO(
         @NotEmpty(message = "La via è obbligatoria")
@@ -21,8 +21,7 @@ public record IndirizzoDTO(
         @Size(min = 5, max = 5, message = "Il CAP deve essere di 5 caratteri")
         String cap,
 
-        @NotEmpty(message = "Il comune è obbligatorio")
-        String comune
+        @NotNull(message = "L'ID del comune è obbligatorio")
+        String comuneId  // Cambiato da UUID a String
 ) {
-
 }
