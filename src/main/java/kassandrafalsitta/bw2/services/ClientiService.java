@@ -166,16 +166,16 @@ public class ClientiService {
     // Metodi per ordinamento
 
 
-    public List<Cliente> getClientiOrderedByFatturatoAnnuale() {
-        return clientiRepository.findAllByOrderByFatturatoAnnuale();
+    public List<Cliente> getClientiByFatturatoAnnuale(int fatturatoAnnuale) {
+        return clientiRepository.findAllByFatturatoAnnuale(fatturatoAnnuale);
     }
 
-    public List<Cliente> getClientiOrderedByDataInserimento() {
-        return clientiRepository.findAllByOrderByDataInserimento();
+    public List<Cliente> getClientiByDataInserimento(LocalDate dataInserimento) {
+        return clientiRepository.findAllByDataInserimento(dataInserimento);
     }
 
-    public List<Cliente> getClientiOrderedByDataUltimoContatto() {
-        return clientiRepository.findAllByOrderByDataUltimoContatto();
+    public List<Cliente> getClientiByDataUltimoContatto(LocalDate dataUltimoContatto) {
+        return clientiRepository.findAllByDataUltimoContatto(dataUltimoContatto);
     }
 
     // Metodi per filtraggio

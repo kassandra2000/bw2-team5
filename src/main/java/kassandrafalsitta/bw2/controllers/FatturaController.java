@@ -95,11 +95,26 @@ public class FatturaController {
         return fattureService.getFattureByImportoRange(min, max);
     }
 
-    // Endpoint per ottenere un cliente per ID
-    @GetMapping("/{id}")
-    public Cliente getClienteById(@PathVariable UUID id) {
-        return clientiService.findById(id);
+    // Endpoint per ottenere una fattura tramite cliente ID
+    @GetMapping("/{clienteId}")
+    public List<Fattura> getFatturebyClienteId(@PathVariable Cliente id) {
+        return fattureService.findByClienteId(id);
     }
+
+    // Endpoint per ottenere un cliente per data
+    @GetMapping("/filtro/data")
+    public List<Fattura> getFattureByData(@RequestParam LocalDate data){
+        return fattureService.getFattureByData(data);
+    }
+
+
+    /*// Endpoint per ottenere un cliente per anno
+    @GetMapping("/filtro/anno")
+    public List<Fattura> getFattureByAnno(@RequestParam Integer anno){
+        return fattureService.getFattureByAnno(anno);
+    }
+
+     */
 
 
 }

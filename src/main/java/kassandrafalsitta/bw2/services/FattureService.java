@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -100,17 +99,24 @@ public class FattureService {
         return this.fattureRepository.findByCliente(cliente);
     }
 
-    public List<Fattura> getFattureByStato(Fattura stato) {
-        return fattureRepository.findByStato(stato);
+    public List<Fattura> findByClienteId(Cliente id) {
+        return this.fattureRepository.findByCliente(id);
+    }
+
+    public List<Fattura> getFattureByStato(String stato) {
+        return fattureRepository.findByStatoFattura(stato);
     }
 
     public List<Fattura> getFattureByData(LocalDate data) {
-        return fattureRepository.findByData(data);
+        return fattureRepository.findByDataFattura(data);
     }
 
+    /*
     public List<Fattura> getFattureByAnno(Integer anno) {
-        return fattureRepository.findByAnno(anno);
+      return fattureRepository.findByAnno(anno);
     }
+     */
+
 
     public List<Fattura> getFattureByImportoRange(Double min, Double max) {
         return fattureRepository.findByImportoBetween(min, max);

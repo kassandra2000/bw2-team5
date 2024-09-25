@@ -14,13 +14,13 @@ public interface ClientiRepository extends JpaRepository<Cliente, UUID> {
     Optional<Cliente> findByEmail(String email);
 
     // Ordinamento per fatturato annuale
-    List<Cliente> findAllByOrderByFatturatoAnnuale();
+    List<Cliente> findAllByFatturatoAnnuale(int fatturatoAnnuale);
 
     // Ordinamento per data di inserimento
-    List<Cliente> findAllByOrderByDataInserimento();
+    List<Cliente> findAllByDataInserimento(LocalDate dataInserimento);
 
     // Ordinamento per data di ultimo contatto
-    List<Cliente> findAllByOrderByDataUltimoContatto();
+    List<Cliente> findAllByDataUltimoContatto(LocalDate dataUltimoContatto);
 
     // Filtraggio per fatturato annuale (range)
     List<Cliente> findByFatturatoAnnualeBetween(Long min, Long max);

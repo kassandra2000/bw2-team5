@@ -5,7 +5,6 @@ import kassandrafalsitta.bw2.entities.Fattura;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -19,14 +18,19 @@ public interface FattureRepository extends JpaRepository<Fattura, UUID> {
     // Filtraggio per cliente
     List<Fattura> findByCliente(Cliente cliente);
 
+    //Filtraggio per cliente ID
+    List<Fattura> findByClienteId(Cliente id);
+
     // Filtraggio per stato
-    List<Fattura> findByStato(Fattura statoFattura);
+    List<Fattura> findByStatoFattura(String statoFattura);
 
     // Filtraggio per data
-    List<Fattura> findByData(LocalDate data);
+    List<Fattura> findByDataFattura(LocalDate data);
 
+    /*
     // Filtraggio per anno
-    List<Fattura> findByAnno(Integer anno);
+        List<Fattura> findByAnno(Integer anno);
+     */
 
     // Filtraggio per range di importi
     List<Fattura> findByImportoBetween(Double min, Double max);
