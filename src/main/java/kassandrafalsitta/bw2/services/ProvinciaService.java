@@ -19,7 +19,7 @@ public class ProvinciaService {
     private final Map<String, String> CORREZIONI_NOMI_PROVINCE = new HashMap<>();
 
     {
-        CORREZIONI_NOMI_PROVINCE.put("La-spezia", "La Spezia");
+        CORREZIONI_NOMI_PROVINCE.put("La-Spezia", "La Spezia");
         CORREZIONI_NOMI_PROVINCE.put("Reggio-Calabria", "Reggio Calabria");
         CORREZIONI_NOMI_PROVINCE.put("Carbonia Iglesias", "Sud Sardegna");
         CORREZIONI_NOMI_PROVINCE.put("Medio Campidano", "Sud Sardegna");
@@ -38,10 +38,14 @@ public class ProvinciaService {
     }
 
     // Correzione Sigle
-    private final Map<String, String> SIGLE_PROVINCE = Map.of(
-            "Sud Sardegna", "SU",
-            "Verbano-Cusio-Ossola", "VB"
-    );
+    private final Map<String, String> SIGLE_PROVINCE = new HashMap<>();
+
+    {
+        SIGLE_PROVINCE.put("Sud Sardegna", "SU");
+        SIGLE_PROVINCE.put("Verbano-Cusio-Ossola", "VB");
+        SIGLE_PROVINCE.put("Sassari", "SS");
+        //SIGLE_PROVINCE.put("","");
+    }
 
     public void importProvinceCSV(String filePath) {
         List<Provincia> province = new ArrayList<>();
@@ -60,9 +64,11 @@ public class ProvinciaService {
 
                     // Se esiste già una provincia con il nome corretto non ne aggiunge una copia
                     //(es. non saranno create più Sud Sardegna)
+                    boolean existsInProvince = province.stream()
+                            .anyMatch(p -> p.getNome().equalsIgnoreCase(nomeCorretto));
                     Optional<Provincia> provinciaEsistente = provinciaRepository.findByNome(nomeCorretto);
 
-                    if (provinciaEsistente.isEmpty()) {
+                    if (!existsInProvince && provinciaEsistente.isEmpty()) {
                         Provincia provincia = new Provincia();
                         provincia.setSigla(SIGLE_PROVINCE.getOrDefault(nomeCorretto, casella[0]));
                         provincia.setNome(nomeCorretto);

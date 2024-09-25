@@ -11,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ComuneService {
@@ -21,6 +20,7 @@ public class ComuneService {
 
     @Autowired
     private ProvinciaRepository provinciaRepository;
+
 
     public void importComuniCSV(String filePath) {
         List<Comune> comuni = new ArrayList<>();
@@ -33,23 +33,24 @@ public class ComuneService {
                 String[] casella = riga.split(";");
 
                 Comune comune = new Comune();
-                comune.setNome(casella[2]); // Imposta il nome del comune
+                comune.setNome(casella[2]);
 
-                // utilizzando il nome della provincia nel file dei comuni, andiamo a cercare se esiste
-                //una provincia con lo stesso nome nella repository delle province
-                Optional<Provincia> provinciaAssociazione = provinciaRepository.findByNome(casella[3]);
-                // se troviamo un risultato assegnamo la provincia trovata da provinciaRepository all'attributo
-                //provincia dell'istanza Comune
-                provinciaAssociazione.ifPresent(comune::setProvincia);
-
+                //Se per caso ci sono province doppione (non dovrebbero esserci) associa alla prima
+                List<Provincia> province = provinciaRepository.findAllByNome(casella[3]);
+                if (province.size() == 1) {
+                    comune.setProvincia(province.get(0));
+                } else if (province.size() > 1) {
+                    comune.setProvincia(province.get(0));
+                }
                 comuni.add(comune);
             }
 
-            comuneRepository.saveAll(comuni); // Salva tutti i comuni
+            comuneRepository.saveAll(comuni);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     public boolean isComuniTableEmpty() {
         return comuneRepository.count() == 0;
