@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -100,20 +99,27 @@ public class FattureService {
         return this.fattureRepository.findByCliente(cliente);
     }
 
-    public List<Fattura> getFattureFiltraPerStato(String stato){
-        return fattureRepository.filterByStato(stato);
+    public List<Fattura> findByClienteId(Cliente id) {
+        return this.fattureRepository.findByCliente(id);
     }
 
-    public List<Fattura> getFattureFiltraPerData(LocalDate data){
-        return fattureRepository.filterByData(data);
+    public List<Fattura> getFattureByStato(String stato) {
+        return fattureRepository.findByStatoFattura(stato);
     }
 
-    public List<Fattura> getFattureFiltraPerAnno(LocalDate startDate, LocalDate endDate){
-        return fattureRepository.filterByAnno(startDate, endDate);
+    public List<Fattura> getFattureByData(LocalDate data) {
+        return fattureRepository.findByDataFattura(data);
     }
 
-    public List<Fattura> getFattureFiltraPerRangeImporti(BigDecimal minimo, BigDecimal massimo){
-        return fattureRepository.filterByRangeImporto(minimo, massimo);
+    /*
+    public List<Fattura> getFattureByAnno(Integer anno) {
+      return fattureRepository.findByAnno(anno);
+    }
+     */
+
+
+    public List<Fattura> getFattureByImportoRange(Double min, Double max) {
+        return fattureRepository.findByImportoBetween(min, max);
     }
 
 }

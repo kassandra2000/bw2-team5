@@ -5,6 +5,7 @@ import kassandrafalsitta.bw2.entities.Fattura;
 import kassandrafalsitta.bw2.exceptions.BadRequestException;
 import kassandrafalsitta.bw2.payloads.FatturaDTO;
 import kassandrafalsitta.bw2.payloads.FatturaRespDTO;
+import kassandrafalsitta.bw2.services.ClientiService;
 import kassandrafalsitta.bw2.services.FattureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -26,6 +27,9 @@ import java.util.stream.Collectors;
 public class FatturaController {
     @Autowired
     private FattureService fattureService;
+    @Autowired
+    private ClientiService clientiService;
+
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -67,5 +71,50 @@ public class FatturaController {
     public void findFatturaByIdAndDelete(@PathVariable UUID reservationId) {
         fattureService.findByIdAndDelete(reservationId);
     }
+
+    // Endpoint per filtrare le fatture per cliente
+    @GetMapping("/filtro/cliente/{clienteId}")
+    public List<Fattura> getFattureByCliente(@PathVariable UUID clienteId) {
+        Cliente cliente = clientiService.findById(clienteId);
+        return fattureService.findByCliente(cliente);
+    }
+
+   /*// Endpoint per filtrare le fatture per stato
+    @GetMapping("/filtro/stato/{statoId}")
+    public List<Fattura> getFattureByStato(@PathVariable Long statoId) {
+        StatoFattura stato = statoFatturaService.getStatoById(statoId);
+        return fattureService.getFattureByStato(stato);
+    }
+
+    */
+
+    // Endpoint per filtrare le fatture per range di importo
+    @GetMapping("/filtro/importo")
+    public List<Fattura> getFattureByImportoRange(@RequestParam Double min,
+                                                  @RequestParam Double max) {
+        return fattureService.getFattureByImportoRange(min, max);
+    }
+
+    // Endpoint per ottenere una fattura tramite cliente ID
+    @GetMapping("/{clienteId}")
+    public List<Fattura> getFatturebyClienteId(@PathVariable Cliente id) {
+        return fattureService.findByClienteId(id);
+    }
+
+    // Endpoint per ottenere un cliente per data
+    @GetMapping("/filtro/data")
+    public List<Fattura> getFattureByData(@RequestParam LocalDate data){
+        return fattureService.getFattureByData(data);
+    }
+
+
+    /*// Endpoint per ottenere un cliente per anno
+    @GetMapping("/filtro/anno")
+    public List<Fattura> getFattureByAnno(@RequestParam Integer anno){
+        return fattureService.getFattureByAnno(anno);
+    }
+
+     */
+
 
 }
