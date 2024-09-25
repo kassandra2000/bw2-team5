@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record ClientiDTO(
+public record ClientiUpdateDTO(
         @NotEmpty(message = "Lo username è obbligatorio")
         @Size(min = 3, max = 40, message = "Lo username deve essere compreso tra 3 e 40 caratteri")
         String username,
@@ -30,6 +30,9 @@ public record ClientiDTO(
         @NotEmpty(message = "La data è obbligatoria")
         @Size(min = 10, max = 10, message = "La data deve avere 10 caratteri")
         String dataUltimoContatto,
+        @NotEmpty(message = "Il fatturato annuale è obbligatorio")
+        @Size(min = 1, max = 20, message = "Il fatturato annuale deve avere almeno 1 carattere")
+        String fatturatoAnnuale,
         @NotEmpty(message = "La Pec è obbligatoria")
         @Size(min = 3, max = 40, message = "La Pec deve essere compresa tra 3 e 40 caratteri")
         String pec,

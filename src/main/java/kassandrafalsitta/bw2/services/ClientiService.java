@@ -8,6 +8,7 @@ import kassandrafalsitta.bw2.exceptions.BadRequestException;
 import kassandrafalsitta.bw2.exceptions.NotFoundException;
 import kassandrafalsitta.bw2.payloads.ClientiDTO;
 import kassandrafalsitta.bw2.payloads.ClientiRuoloDTO;
+import kassandrafalsitta.bw2.payloads.ClientiUpdateDTO;
 import kassandrafalsitta.bw2.repositories.ClientiRepository;
 import kassandrafalsitta.bw2.tools.MailgunSender;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -73,7 +75,6 @@ public class ClientiService {
                 Long.parseLong(body.partitaIva()),
                 dataInserimento,
                 dataUltimoContatto,
-                Integer.parseInt(body.fatturatoAnnuale()),
                 body.pec(),
                 Long.parseLong(body.telefono()),
                 body.emailDiContatto(),
@@ -93,7 +94,7 @@ public class ClientiService {
         return this.clientiRepository.findById(clientiId).orElseThrow(() -> new NotFoundException(clientiId));
     }
 
-    public Cliente findByIdAndUpdate(UUID clientiId, ClientiDTO updatedClienti) {
+    public Cliente findByIdAndUpdate(UUID clientiId, ClientiUpdateDTO updatedClienti) {
         Cliente found = findById(clientiId);
         found.setUsername(updatedClienti.username());
         found.setNome(updatedClienti.nome());
@@ -155,4 +156,42 @@ public class ClientiService {
         found.setAvatar(avatar);
         return this.clientiRepository.save(found);
     }
+
+
+    // Metodo per ottenere tutti i clienti
+    public List<Cliente> getAllClienti() {
+        return clientiRepository.findAll();
+    }
+
+    // Metodi per ordinamento
+
+
+    public List<Cliente> getClientiByFatturatoAnnuale(int fatturatoAnnuale) {
+        return clientiRepository.findAllByFatturatoAnnuale(fatturatoAnnuale);
+    }
+
+    public List<Cliente> getClientiByDataInserimento(LocalDate dataInserimento) {
+        return clientiRepository.findAllByDataInserimento(dataInserimento);
+    }
+
+    public List<Cliente> getClientiByDataUltimoContatto(LocalDate dataUltimoContatto) {
+        return clientiRepository.findAllByDataUltimoContatto(dataUltimoContatto);
+    }
+
+    // Metodi per filtraggio
+    public List<Cliente> getClientiByFatturatoAnnualeRange(Long min, Long max) {
+        return clientiRepository.findByFatturatoAnnualeBetween(min, max);
+    }
+
+    public List<Cliente> getClientiByDataInserimentoRange(LocalDate startDate, LocalDate endDate) {
+        return clientiRepository.findByDataInserimentoBetween(startDate, endDate);
+    }
+
+    public List<Cliente> getClientiByDataUltimoContattoRange(LocalDate startDate, LocalDate endDate) {
+        return clientiRepository.findByDataUltimoContattoBetween(startDate, endDate);
+    }
+
+
+
+
 }

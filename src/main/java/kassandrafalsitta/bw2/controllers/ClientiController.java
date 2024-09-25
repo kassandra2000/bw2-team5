@@ -1,9 +1,15 @@
 package kassandrafalsitta.bw2.controllers;
 
 import kassandrafalsitta.bw2.entities.Cliente;
+import kassandrafalsitta.bw2.entities.Fattura;
+import kassandrafalsitta.bw2.exceptions.BadRequestException;
+import kassandrafalsitta.bw2.exceptions.NotFoundException;
 import kassandrafalsitta.bw2.payloads.ClientiDTO;
 import kassandrafalsitta.bw2.payloads.ClientiRuoloDTO;
+import kassandrafalsitta.bw2.payloads.ClientiUpdateDTO;
+import kassandrafalsitta.bw2.payloads.FatturaDTO;
 import kassandrafalsitta.bw2.services.ClientiService;
+import kassandrafalsitta.bw2.services.FattureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -14,6 +20,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -21,6 +30,8 @@ import java.util.UUID;
 public class ClientiController {
     @Autowired
     private ClientiService clientiService;
+    @Autowired
+    private FattureService fattureService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -38,7 +49,7 @@ public class ClientiController {
 
     @PutMapping("/{userId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public Cliente findClienteByIdAndUpdate(@PathVariable UUID userId, @RequestBody @Validated ClientiDTO body) {
+    public Cliente findClienteByIdAndUpdate(@PathVariable UUID userId, @RequestBody @Validated ClientiUpdateDTO body) {
         return clientiService.findByIdAndUpdate(userId, body);
     }
 
@@ -68,7 +79,7 @@ public class ClientiController {
     }
 
     @PutMapping("/me")
-    public Cliente updateProfile(@AuthenticationPrincipal Cliente currentAuthenticatedCliente, @RequestBody ClientiDTO body) {
+    public Cliente updateProfile(@AuthenticationPrincipal Cliente currentAuthenticatedCliente, @RequestBody ClientiUpdateDTO body) {
         return this.clientiService.findByIdAndUpdate(currentAuthenticatedCliente.getId(), body);
     }
 
@@ -82,4 +93,118 @@ public class ClientiController {
     public Cliente uploadMyCover(@AuthenticationPrincipal Cliente currentAuthenticatedCliente, @RequestParam("avatar") MultipartFile image) throws IOException {
         return this.clientiService.uploadImage(currentAuthenticatedCliente.getId(), image);
     }
+
+    // me/fatture
+    @GetMapping("/me/event")
+    @PreAuthorize("hasAuthority('EVENT_ORGANIZER')")
+    public List<Fattura> getProfileFattura(@AuthenticationPrincipal Cliente currentAuthenticatedCliente) {
+        return this.fattureService.findByCliente(currentAuthenticatedCliente);
+    }
+
+    @GetMapping("/me/event/{clientId}")
+    @PreAuthorize("hasAuthority('EVENT_ORGANIZER')")
+    public Fattura getProfileFatturaById(@AuthenticationPrincipal Cliente currentAuthenticatedCliente, @PathVariable UUID clientId) {
+        List<Fattura> eventList = this.fattureService.findByCliente(currentAuthenticatedCliente);
+        Fattura userFattura = eventList.stream().filter(event -> event.getId().equals(clientId)).findFirst()
+                .orElseThrow(() -> new NotFoundException(clientId));
+        return fattureService.findById(userFattura.getId());
+    }
+
+
+    @PutMapping("/me/event/{clientId}")
+    @PreAuthorize("hasAuthority('EVENT_ORGANIZER')")
+    public Fattura updateProfileFattura(@AuthenticationPrincipal Cliente currentAuthenticatedCliente, @PathVariable UUID clientId, @RequestBody FatturaDTO body) {
+        List<Fattura> eventList = this.fattureService.findByCliente(currentAuthenticatedCliente);
+        Fattura userFattura = eventList.stream().filter(event -> event.getId().equals(clientId)).findFirst()
+                .orElseThrow(() -> new NotFoundException(clientId));
+        return this.fattureService.findByIdAndUpdate(userFattura.getId(), body);
+    }
+
+    @DeleteMapping("/me/event/{clientId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAuthority('EVENT_ORGANIZER')")
+    public void deleteProfileFattura(@AuthenticationPrincipal Cliente currentAuthenticatedCliente, @PathVariable UUID clientId) {
+        List<Fattura> eventList = this.fattureService.findByCliente(currentAuthenticatedCliente);
+        Fattura userFattura = eventList.stream().filter(event -> event.getId().equals(clientId)).findFirst()
+                .orElseThrow(() -> new NotFoundException(clientId));
+        this.fattureService.findByIdAndDelete(userFattura.getId());
+    }
+
+    // Endpoint per ottenere tutti i clienti
+    @GetMapping("/cerca")
+    public List<Cliente> getAllClienti() {
+        return clientiService.getAllClienti();
+    }
+
+    // Endpoint per filtrare i clienti per fatturato annuale
+    @GetMapping("/fatturato")
+    public List<Cliente> getClientiByFatturatoAnnualeRange(@RequestParam Long min,
+                                                            @RequestParam Long max) {
+        return clientiService.getClientiByFatturatoAnnualeRange(min, max);
+    }
+
+    // Endpoint per filtrare i clienti per data di inserimento - TESTATO
+    @GetMapping("/dataInserimento")
+    public List<Cliente> getClientiByDataInserimentoRange(@RequestParam String startDate,
+                                                           @RequestParam String endDate) {
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        return clientiService.getClientiByDataInserimentoRange(start, end);
+    }
+
+    // Endpoint per filtrare i clienti per data ultimo contatto - TESTATO
+    @GetMapping("/dataUltimoContatto")
+    public List<Cliente> getClientiByDataUltimoContattoRange(@RequestParam String startDate1,
+                                                             @RequestParam String endDate1){
+        LocalDate start = null;
+        try {
+            start = LocalDate.parse(startDate1);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + startDate1 + " inserire nel seguente formato: AAAA/MM/GG");
+        }LocalDate end = null;
+        try {
+            end = LocalDate.parse(endDate1);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + endDate1 + " inserire nel seguente formato: AAAA/MM/GG");
+        }
+        return clientiService.getClientiByDataUltimoContattoRange(start,end);
+    }
+
+    //Endpoint per ordinare i clienti secondo il fatturato annuale
+
+    @GetMapping("/ordinaFatturato")
+    public List<Cliente> getClientiByFatturatoAnnuale(@RequestParam int fatturatoAnnuale){
+        return clientiService.getClientiByFatturatoAnnuale(fatturatoAnnuale);
+    }
+
+    //Endpoint per ordinare i clienti secondo data inserimento
+
+    @GetMapping("/ordinaDataInserimento")
+    public List<Cliente> getClientiByDataInserimento(@RequestParam String dataInserimento){
+        LocalDate start = null;
+        try {
+            start = LocalDate.parse(dataInserimento);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + dataInserimento + " inserire nel seguente formato: AAAA/MM/GG");
+        }
+        return clientiService.getClientiByDataInserimento(start);
+    }
+
+    //Endpoint per ordinare i clienti secondo data ultimo contatto
+
+    @GetMapping("/ordinaDataUltimoContatto")
+    public List<Cliente> getClientiByDataUltimoContatto(@RequestParam String dataUltimoContatto){
+        LocalDate start = null;
+        try {
+            start = LocalDate.parse(dataUltimoContatto);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + dataUltimoContatto + " inserire nel seguente formato: AAAA/MM/GG");
+        }
+        return clientiService.getClientiByDataUltimoContatto(start);
+    }
+
+
+
+
+
 }

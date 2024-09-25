@@ -29,4 +29,10 @@ public class Indirizzo {
 
     @ManyToOne
     private Cliente cliente;
+
+    public Indirizzo(String via, String civico, String localita, String cap, String comune) {
+    }
+
+    public Indirizzo(String via, String civico, String localita, String cap, Comune comune) {
+    }
 }
