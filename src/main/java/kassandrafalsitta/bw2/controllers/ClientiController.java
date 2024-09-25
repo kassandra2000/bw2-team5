@@ -153,6 +153,10 @@ public class ClientiController {
                 // Filtra per data ultimo contatto (come stringa)
                 String dataUltimoContatto = queryParams.get("dataUltimoContatto");
                 return clientiService.getClientiByDataUltimoContatto(dataUltimoContatto);
+            } else if (queryParams.containsKey("nomeParziale")) {
+                // Filtra per parte del nome
+                String nomeParziale = queryParams.get("nomeParziale");
+                return clientiService.getClientiByNomeParziale(nomeParziale);
             } else {
                 throw new BadRequestException("Parametro non valido per la ricerca singola");
             }
@@ -181,10 +185,5 @@ public class ClientiController {
             throw new BadRequestException("Numero di parametri non valido");
         }
     }
-
-
-
-
-
 
 }

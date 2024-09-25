@@ -1,7 +1,9 @@
 package kassandrafalsitta.bw2.services;
 
+import kassandrafalsitta.bw2.entities.Cliente;
 import kassandrafalsitta.bw2.entities.Comune;
 import kassandrafalsitta.bw2.entities.Indirizzo;
+import kassandrafalsitta.bw2.exceptions.BadRequestException;
 import kassandrafalsitta.bw2.exceptions.NotFoundException;
 import kassandrafalsitta.bw2.payloads.IndirizzoDTO;
 import kassandrafalsitta.bw2.repositories.ComuneRepository;
@@ -21,6 +23,9 @@ public class IndirizziService {
     @Autowired
     private ComuneRepository comuneRepository;
 
+    @Autowired
+    private ClientiService clientiService;
+
 
     public List<Indirizzo> findAll() {
         return indirizzoRepository.findAll();
@@ -38,14 +43,30 @@ public class IndirizziService {
         Comune comune = comuneRepository.findById(comuneId)
                 .orElseThrow(() -> new NotFoundException("Comune non trovato con ID: " + comuneId));
 
-        Indirizzo indirizzo = new Indirizzo(
-                body.via(),
-                body.civico(),
-                body.localita(),
-                body.cap(),
-                comune
-        );
-        return indirizzoRepository.save(indirizzo);
+        UUID clienteId;
+        try {
+            clienteId = UUID.fromString(body.clienteId());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("L'ID del cliente non è valido: " + body.clienteId());
+        }
+
+        Cliente cliente = clientiService.findById(clienteId);
+        List<Indirizzo> indirizzoList = indirizzoRepository.findByCliente(cliente);
+
+        if (indirizzoList.size()>0 & indirizzoList.size()<3){
+            Indirizzo indirizzo = new Indirizzo(
+                    body.via(),
+                    body.civico(),
+                    body.localita(),
+                    body.cap(),
+                    comune
+            );
+            return indirizzoRepository.save(indirizzo);
+        } else {
+            throw new BadRequestException("Non puoi salvare altri indirizzi per questo utente");
+        }
+
+
     }
 
     public Indirizzo findById(UUID indirizzoId) {

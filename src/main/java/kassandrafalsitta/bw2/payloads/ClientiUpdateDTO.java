@@ -42,12 +42,6 @@ public record ClientiUpdateDTO(
         @NotEmpty(message = "L'email è obbligatoria")
         @Email(message = "L'email inserita non è valida")
         String emailDiContatto,
-        @NotEmpty(message = "Il nome di contatto è obbligatorio")
-        @Size(min = 3, max = 40, message = "Il nome di contatto deve essere compreso tra 3 e 40 caratteri")
-        String nomeDiContatto,
-        @NotEmpty(message = "Il cognome è obbligatorio")
-        @Size(min = 3, max = 40, message = "Il cognome deve essere compreso tra 3 e 40 caratteri")
-        String cognomeDiContatto,
         @NotNull(message = "Il telefono è obbligatorio")
         @Size(min = 8, max = 15, message = "Il telefono deve essere compresa tra 8 e 15 caratteri")
         String telefonoDiContatto,

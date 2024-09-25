@@ -22,6 +22,11 @@ public record IndirizzoDTO(
         String cap,
 
         @NotNull(message = "L'ID del comune è obbligatorio")
-        String comuneId  // Cambiato da UUID a String
+        String comuneId, // Cambiato da UUID a String
+
+        @NotEmpty(message = "L'UUID del cliente è obbligatorio")
+        @Size(min = 36, max = 36, message = "L'UUID del cliente  deve avere 36 caratteri")
+        String clienteId
+
 ) {
 }

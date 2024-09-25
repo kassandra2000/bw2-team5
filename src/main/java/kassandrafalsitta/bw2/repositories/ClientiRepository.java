@@ -31,4 +31,10 @@ public interface ClientiRepository extends JpaRepository<Cliente, UUID> {
     // Filtraggio per data di ultimo contatto
     List<Cliente> findByDataUltimoContattoBetween(LocalDate startDate, LocalDate endDate);
 
+    //Filtraggio per parte del nome
+    List<Cliente> findByNomeContainingIgnoreCase(String nomeParziale);
+
+    //
+
+
 }

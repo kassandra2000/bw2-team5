@@ -30,13 +30,11 @@ public class Cliente extends Utente implements UserDetails {
     private String pec;
     private long telefono;
     private String emailDiContatto;
-    private String nomeDiContatto;
-    private String cognomeDiContatto;
     private long telefonoDiContatto;
     private String logoAziendale;
     private String tipoClienti;
 
-    public Cliente(String username, String nome, String cognome, String email, String password, long partitaIva, LocalDate dataInserimento, LocalDate dataUltimoContatto, String pec, long telefono, String emailDiContatto, String nomeDiContatto, String cognomeDiContatto, long telefonoDiContatto, String logoAziendale, String tipoClienti) {
+    public Cliente(String username, String nome, String cognome, String email, String password, long partitaIva, LocalDate dataInserimento, LocalDate dataUltimoContatto, String pec, long telefono, String emailDiContatto, long telefonoDiContatto, String logoAziendale, String tipoClienti) {
         super(username, nome, cognome, email, password);
         this.partitaIva = partitaIva;
         this.dataInserimento = dataInserimento;
@@ -45,8 +43,6 @@ public class Cliente extends Utente implements UserDetails {
         this.pec = pec;
         this.telefono = telefono;
         this.emailDiContatto = emailDiContatto;
-        this.nomeDiContatto = nomeDiContatto;
-        this.cognomeDiContatto = cognomeDiContatto;
         this.telefonoDiContatto = telefonoDiContatto;
         this.logoAziendale = logoAziendale;
         this.tipoClienti = tipoClienti;

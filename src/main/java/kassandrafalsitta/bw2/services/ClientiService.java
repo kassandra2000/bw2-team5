@@ -78,8 +78,6 @@ public class ClientiService {
                 body.pec(),
                 Long.parseLong(body.telefono()),
                 body.emailDiContatto(),
-                body.nomeDiContatto(),
-                body.cognomeDiContatto(),
                 Long.parseLong(body.telefonoDiContatto()),
                 body.logoAziendale(),
                 body.tipoClienti());
@@ -121,8 +119,6 @@ public class ClientiService {
         found.setPec(updatedClienti.pec());
         found.setTelefono(Long.parseLong(updatedClienti.telefono() + "L"));
         found.setEmailDiContatto(updatedClienti.emailDiContatto());
-        found.setNomeDiContatto(updatedClienti.nomeDiContatto());
-        found.setCognomeDiContatto(updatedClienti.cognomeDiContatto());
         found.setTelefonoDiContatto(Long.parseLong(updatedClienti.telefonoDiContatto() + "L"));
         found.setLogoAziendale(updatedClienti.logoAziendale());
         found.setTipoClienti(updatedClienti.tipoClienti());
@@ -227,7 +223,8 @@ public class ClientiService {
         return clientiRepository.findByDataUltimoContattoBetween(data, data1);
     }
 
-
-
+    public List<Cliente> getClientiByNomeParziale(String nomeParziale) {
+        return clientiRepository.findByNomeContainingIgnoreCase(nomeParziale);
+    }
 
 }
