@@ -3,6 +3,7 @@ package kassandrafalsitta.bw2.services;
 import kassandrafalsitta.bw2.entities.Cliente;
 import kassandrafalsitta.bw2.entities.Comune;
 import kassandrafalsitta.bw2.entities.Indirizzo;
+import kassandrafalsitta.bw2.enums.TipoIndirizzo;
 import kassandrafalsitta.bw2.exceptions.BadRequestException;
 import kassandrafalsitta.bw2.exceptions.NotFoundException;
 import kassandrafalsitta.bw2.payloads.IndirizzoDTO;
@@ -51,29 +52,48 @@ public class IndirizziService {
         }
 
         Cliente cliente = clientiService.findById(clienteId);
-        this.indirizzoRepository.findByCliente_sedeLegale(cliente.getSedeLegale()).ifPresent(
-                clienti -> {
-                    throw new BadRequestException("La sede legalel " + cliente.getSedeLegale() + " è già in uso!");
-                }
-        );
 
-        this.indirizzoRepository.findByCliente_sedeOperativa(cliente.getSedeOperativa()).ifPresent(
-                clienti -> {
-                    throw new BadRequestException("La sede operativa " + cliente.getSedeOperativa() + " è già in uso!");
-                }
-        );
-
+        // Determina il tipo di indirizzo
+        TipoIndirizzo tipoIndirizzo;
+        try {
+            tipoIndirizzo = TipoIndirizzo.valueOf(body.tipoIndirizzo());
+        } catch (Exception e) {
+            throw new BadRequestException("Il tipo di indirizzo non è valido: " + body.tipoIndirizzo() +
+                    " Inserire 'SEDE_LEGALE' o 'SEDE_OPERATIVA'");
+        }
+        // Creazione dell'indirizzo
         Indirizzo indirizzo = new Indirizzo(
                 body.via(),
                 body.civico(),
                 body.localita(),
                 body.cap(),
-                comune
+                comune,
+                cliente,
+                tipoIndirizzo
         );
+        // Controlla se il cliente ha già una sede legale
+        if (tipoIndirizzo == TipoIndirizzo.SEDE_LEGALE) {
+            this.indirizzoRepository.findByClienteAndTipoIndirizzo(cliente, TipoIndirizzo.SEDE_LEGALE).ifPresent(
+                    indirizzi -> {
+                        throw new BadRequestException("Il cliente ha già una sede legale registrata: " + indirizzo.getVia());
+                    }
+            );
+        } else {
+            cliente.setSedeLegale(indirizzo);
+        }
+
+        // Controlla se il cliente ha già una sede operativa
+        if (tipoIndirizzo == TipoIndirizzo.SEDE_OPERATIVA) {
+            this.indirizzoRepository.findByClienteAndTipoIndirizzo(cliente, TipoIndirizzo.SEDE_OPERATIVA).ifPresent(
+                    indirizzi -> {
+                        throw new BadRequestException("Il cliente ha già una sede operativa registrata: " + indirizzo.getVia());
+                    }
+            );
+        } else {
+            cliente.setSedeOperativa(indirizzo);
+        }
+
         return indirizzoRepository.save(indirizzo);
-
-
-
     }
 
     public Indirizzo findById(UUID indirizzoId) {

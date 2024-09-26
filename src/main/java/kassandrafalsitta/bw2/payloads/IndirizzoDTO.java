@@ -26,7 +26,11 @@ public record IndirizzoDTO(
 
         @NotEmpty(message = "L'UUID del cliente è obbligatorio")
         @Size(min = 36, max = 36, message = "L'UUID del cliente  deve avere 36 caratteri")
-        String clienteId
+        String clienteId,
+
+        @NotEmpty(message = "Il tipo indirizzo è obbligatorio")
+        @Size(min = 3, max = 40, message = "Il tipo indirizzo  deve essere  compreso tra 3 e 40 caratteri")
+        String tipoIndirizzo
 
 ) {
 }

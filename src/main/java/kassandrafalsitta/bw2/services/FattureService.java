@@ -1,10 +1,12 @@
 package kassandrafalsitta.bw2.services;
 
+import jakarta.transaction.Transactional;
 import kassandrafalsitta.bw2.entities.Cliente;
 import kassandrafalsitta.bw2.entities.Fattura;
 import kassandrafalsitta.bw2.exceptions.BadRequestException;
 import kassandrafalsitta.bw2.exceptions.NotFoundException;
 import kassandrafalsitta.bw2.payloads.FatturaDTO;
+import kassandrafalsitta.bw2.repositories.ClientiRepository;
 import kassandrafalsitta.bw2.repositories.FattureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,44 +27,69 @@ public class FattureService {
     private FattureRepository fattureRepository;
     @Autowired
     private ClientiService clientiService;
+    @Autowired
+    private ClientiRepository clientiRepository;
 
     public Page<Fattura> findAll(int page, int size, String sortBy) {
         if (page > 100) page = 100;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return this.fattureRepository.findAll(pageable);
     }
-
+    @Transactional
     public Fattura saveFattura(FatturaDTO body) {
-        UUID clienteID = null;
+        UUID clienteID;
         try {
             clienteID = UUID.fromString(body.clienteID());
         } catch (NumberFormatException e) {
-            throw new BadRequestException("L'UUID dell' utente non è corretto");
+            throw new BadRequestException("L'UUID del cliente non è corretto");
         }
 
-
+        // Recupera il cliente
         Cliente cliente = clientiService.findById(clienteID);
-        Optional<Fattura> existingFatture = this.fattureRepository.findByNumeroAndCliente(body.numero(), cliente);
-        this.fattureRepository.findByNumeroAndCliente(body.numero(), cliente).ifPresent(
-                fattura -> {
-                    throw new BadRequestException("La fattura numero " + body.numero() + " è già in uso per l'utente " + cliente.getId());
-                }
-        );
 
-        LocalDate dataFattura = null;
+        // Parsing e validazione della data
+        LocalDate dataFattura;
         try {
             dataFattura = LocalDate.parse(body.dataFattura());
         } catch (DateTimeParseException e) {
-            throw new BadRequestException("Il formato della data non è valido: " + body.dataFattura() + " inserire nel seguente formato: AAAA/MM/GG");
+            throw new BadRequestException("Il formato della data non è valido: " + body.dataFattura() +
+                    ". Inserire nel formato: AAAA/MM/GG");
         }
-        Fattura fattura = new Fattura(dataFattura, body.importo(), body.numero(), body.statoFattura(), cliente);
+
+        // Crea una nuova istanza di Fattura
+        Fattura fattura = new Fattura(
+                dataFattura,
+                body.importo(),
+                body.numero(),
+                body.statoFattura(),
+                cliente
+        );
+
+        // Salva la nuova fattura
+        Fattura savedFattura = this.fattureRepository.save(fattura);
+
+        // Calcola il totale fatturato annuale per il cliente
         int annoFattura = dataFattura.getYear();
-        List<Fattura> fattureAnnuali = fattureRepository.findByAnno(annoFattura);
+
+        // Filtra le fatture per cliente e anno
+        List<Fattura> fattureAnnuali = fattureRepository.findByClienteAndAnno(cliente, annoFattura);
+
+        // Aggiungi la nuova fattura alla lista per calcolare il totale annuo
+        if (!fattureAnnuali.contains(savedFattura)) {
+            fattureAnnuali.add(savedFattura);
+        }
+
+        // Calcola il totale fatturato annuale come somma degli importi
         int totaleFatturatoAnnuale = fattureAnnuali.stream()
-                .mapToInt(fatturato -> (int) fatturato.getImporto())
+                .mapToInt(fatt -> (int) fatt.getImporto())
                 .sum();
+
+        // Imposta il totale fatturato annuale sul cliente e salva il cliente
         cliente.setFatturatoAnnuale(totaleFatturatoAnnuale);
-        return this.fattureRepository.save(fattura);
+        clientiRepository.save(cliente);
+
+        // Ritorna la nuova fattura salvata
+        return savedFattura;
 
     }
 

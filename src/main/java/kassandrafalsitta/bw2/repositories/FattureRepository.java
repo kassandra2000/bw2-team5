@@ -9,13 +9,13 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface FattureRepository extends JpaRepository<Fattura, UUID> {
 
-    Optional<Fattura> findByNumeroAndCliente(String numero, Cliente cliente);
+    @Query("SELECT f FROM Fattura f WHERE f.cliente = :cliente AND YEAR(f.dataFattura) = :anno")
+    List<Fattura> findByClienteAndAnno(@Param("cliente") Cliente cliente, @Param("anno") int anno);
 
     // Filtraggio per cliente
     List<Fattura> findByCliente(Cliente cliente);
