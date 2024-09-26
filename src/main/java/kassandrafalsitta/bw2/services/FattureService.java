@@ -82,7 +82,6 @@ public class FattureService {
         Fattura found = findById(fatturaId);
 
         Cliente cliente = clientiService.findById(clienteID);
-        ;
         found.setCliente(cliente);
         found.setImporto(updatedFattura.importo());
         found.setNumero(updatedFattura.numero());
@@ -132,9 +131,8 @@ public class FattureService {
 
 
     public List<Fattura> getFattureByAnno(int anno) {
-      return fattureRepository.findByAnno(anno);
+        return fattureRepository.findByAnno(anno);
     }
-
 
 
     public List<Fattura> getFattureByImportoRange(Double min, Double max) {
