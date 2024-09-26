@@ -1,10 +1,12 @@
 package kassandrafalsitta.bw2.controllers;
 
 import kassandrafalsitta.bw2.exceptions.BadRequestException;
-import kassandrafalsitta.bw2.payloads.*;
+import kassandrafalsitta.bw2.payloads.ClientiDTO;
+import kassandrafalsitta.bw2.payloads.ClientiLoginDTO;
+import kassandrafalsitta.bw2.payloads.ClientiLoginRespDTO;
+import kassandrafalsitta.bw2.payloads.ClientiRespDTO;
 import kassandrafalsitta.bw2.services.AuthService;
 import kassandrafalsitta.bw2.services.ClientiService;
-import kassandrafalsitta.bw2.services.UtenteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -19,8 +21,6 @@ import java.util.stream.Collectors;
 public class AuthController {
     @Autowired
     private ClientiService ClientiService;
-    @Autowired
-    private UtenteService utenteService;
 
     @Autowired
     private AuthService authService;
@@ -28,10 +28,6 @@ public class AuthController {
     @PostMapping("/login")
     public ClientiLoginRespDTO login(@RequestBody ClientiLoginDTO payload) {
         return new ClientiLoginRespDTO(this.authService.checkCredentialsAndGenerateToken(payload));
-    }
-    @PostMapping("/loginUtente")
-    public UtenteLoginRespDTO login(@RequestBody UtenteLoginDTO payload) {
-        return new UtenteLoginRespDTO(this.authService.checkCredentialsAndGenerateToken(payload));
     }
 
 
@@ -45,19 +41,6 @@ public class AuthController {
             throw new BadRequestException("Ci sono stati errori nel payload. " + messages);
         } else {
             return new ClientiRespDTO(this.ClientiService.saveClienti(body).getId());
-        }
-    }
-
-    @PostMapping("/utentiRegister")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ClientiRespDTO createUtenti(@RequestBody  @Validated UtenteDTO body, BindingResult validationResult) {
-        if(validationResult.hasErrors())  {
-            String messages = validationResult.getAllErrors().stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .collect(Collectors.joining(". "));
-            throw new BadRequestException("Ci sono stati errori nel payload. " + messages);
-        } else {
-            return new ClientiRespDTO(this.utenteService.saveUtente(body).getId());
         }
     }
 }

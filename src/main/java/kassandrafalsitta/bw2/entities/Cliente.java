@@ -23,7 +23,7 @@ import java.util.List;
 @Entity
 @Table(name = "clienti")
 @JsonIgnoreProperties({"password", "ruolo", "authorities", "enabled", "accountNonLocked", "accountNonExpired", "credentialsNonExpired"})
-public class Cliente extends Utente  implements UserDetails{
+public class Cliente extends Utente implements UserDetails {
     private long partitaIva;
     private LocalDate dataInserimento;
     private LocalDate dataUltimoContatto;
