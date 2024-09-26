@@ -40,39 +40,39 @@ public class ClientiController {
         return this.clientiService.findAll(page, size, sortBy);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/{userId:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public Cliente getClienteById(@PathVariable UUID userId) {
         return clientiService.findById(userId);
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping("/{userId:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public Cliente findClienteByIdAndUpdate(@PathVariable UUID userId, @RequestBody @Validated ClientiUpdateDTO body) {
         return clientiService.findByIdAndUpdate(userId, body);
     }
 
-    @PatchMapping("/{userId}/role")
+    @PatchMapping("/{userId:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}/role")
     @PreAuthorize("hasAuthority('ADMIN')")
     public Cliente findByIdAndUpdateRole(@PathVariable UUID userId, @RequestBody @Validated ClientiRuoloDTO body) {
         return clientiService.findByIdAndUpdateRuolo(userId, body);
     }
 
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/{userId:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}")
     @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void findClienteByIdAndDelete(@PathVariable UUID userId) {
         clientiService.findByIdAndDelete(userId);
     }
 
-    @PostMapping("/{userId}/avatar")
+    @PostMapping("/{userId:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}/avatar")
     @PreAuthorize("hasAuthority('ADMIN')")
     public Cliente uploadCover(@PathVariable UUID userId, @RequestParam("avatar") MultipartFile image) throws IOException {
         return this.clientiService.uploadImage(userId, image);
     }
 
 
-    @PutMapping("/{userId}/indirizzo")
+    @PutMapping("/{userId:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}/indirizzo")
     @PreAuthorize("hasAuthority('ADMIN')")
     public Cliente findEventByIdAndUpdate(@PathVariable UUID userId, @RequestBody @Validated IndirizziClientiDTO body) {
         return this.clientiService.findByIdAndUpdateIndirizzi(userId, body);

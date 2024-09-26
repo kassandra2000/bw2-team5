@@ -123,12 +123,12 @@ public class ClientiService {
             throw new BadRequestException("Il formato della data non è valido: " + updatedClienti.dataUltimoContatto() + " inserire nel seguente formato: AAAA/MM/GG");
         }
         found.setDataUltimoContatto(dataUltimoContatto);
-        found.setPartitaIva(Long.parseLong(updatedClienti.partitaIva() + "L"));
+        found.setPartitaIva(Long.parseLong(updatedClienti.partitaIva() ));
         found.setFatturatoAnnuale( Integer.parseInt(updatedClienti.fatturatoAnnuale()));
         found.setPec(updatedClienti.pec());
-        found.setTelefono(Long.parseLong(updatedClienti.telefono() + "L"));
+        found.setTelefono(Long.parseLong(updatedClienti.telefono() ));
         found.setEmailDiContatto(updatedClienti.emailDiContatto());
-        found.setTelefonoDiContatto(Long.parseLong(updatedClienti.telefonoDiContatto() + "L"));
+        found.setTelefonoDiContatto(Long.parseLong(updatedClienti.telefonoDiContatto() ));
         found.setLogoAziendale(updatedClienti.logoAziendale());
         found.setTipoClienti(updatedClienti.tipoClienti());
         UUID sedeLegaleId;
