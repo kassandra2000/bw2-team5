@@ -11,6 +11,7 @@ import kassandrafalsitta.bw2.exceptions.NotFoundException;
 import kassandrafalsitta.bw2.payloads.ClientiDTO;
 import kassandrafalsitta.bw2.payloads.ClientiRuoloDTO;
 import kassandrafalsitta.bw2.payloads.ClientiUpdateDTO;
+import kassandrafalsitta.bw2.payloads.IndirizziClientiDTO;
 import kassandrafalsitta.bw2.repositories.ClientiRepository;
 import kassandrafalsitta.bw2.repositories.IndirizzoRepository;
 import kassandrafalsitta.bw2.tools.MailgunSender;
@@ -73,22 +74,6 @@ public class ClientiService {
             throw new BadRequestException("Il formato della data non è valido: " + body.dataUltimoContatto() + " inserire nel seguente formato: AAAA/MM/GG");
         }
 
-        UUID sedeLegaleId;
-        try {
-            sedeLegaleId = UUID.fromString(body.sedeLegaleId());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("L'ID del sedeLegale non è valido: " + body.sedeLegaleId());
-        }
-        UUID sedeOperativaId;
-        try {
-            sedeOperativaId = UUID.fromString(body.sedeOperativaId());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("L'ID delsedeOperativa non è valido: " + body.sedeOperativaId());
-        }
-
-        Indirizzo sedeLegale = indirizziRepository.findById(sedeLegaleId) .orElseThrow(() -> new NotFoundException("Indirizzo non trovato con ID: " + body.sedeLegaleId()));;
-        Indirizzo sedeOperativa = indirizziRepository.findById(sedeOperativaId) .orElseThrow(() -> new NotFoundException("Indirizzo non trovato con ID: " + body.sedeOperativaId()));;
-
         Cliente cliente = new Cliente(
                 body.username(),
                 body.nome(),
@@ -103,9 +88,7 @@ public class ClientiService {
                 body.emailDiContatto(),
                 Long.parseLong(body.telefonoDiContatto()),
                 body.logoAziendale(),
-                body.tipoClienti(),
-                sedeLegale,
-                sedeOperativa
+                body.tipoClienti()
         );
         Cliente savedClienti = this.clientiRepository.save(cliente);
 
@@ -160,6 +143,27 @@ public class ClientiService {
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("L'ID delsedeOperativa non è valido: " + updatedClienti.sedeOperativaId());
         }
+        Indirizzo sedeLegale = indirizziRepository.findById(sedeLegaleId) .orElseThrow(() -> new NotFoundException("Indirizzo non trovato con ID: " + updatedClienti.sedeLegaleId()));;
+        Indirizzo sedeOperativa = indirizziRepository.findById(sedeOperativaId) .orElseThrow(() -> new NotFoundException("Indirizzo non trovato con ID: " + updatedClienti.sedeOperativaId()));;
+        found.setSedeLegale(sedeLegale);
+        found.setSedeOperativa(sedeOperativa);
+        return this.clientiRepository.save(found);
+    }
+    public Cliente findByIdAndUpdateIndirizzi(UUID clientiId, IndirizziClientiDTO updatedClienti) {
+        Cliente found = findById(clientiId);
+        UUID sedeLegaleId;
+        try {
+            sedeLegaleId = UUID.fromString(updatedClienti.sedeLegaleId());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("L'ID del sedeLegale non è valido: " + updatedClienti.sedeLegaleId());
+        }
+        UUID sedeOperativaId;
+        try {
+            sedeOperativaId = UUID.fromString(updatedClienti.sedeOperativaId());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("L'ID delsedeOperativa non è valido: " + updatedClienti.sedeOperativaId());
+        }
+
         Indirizzo sedeLegale = indirizziRepository.findById(sedeLegaleId) .orElseThrow(() -> new NotFoundException("Indirizzo non trovato con ID: " + updatedClienti.sedeLegaleId()));;
         Indirizzo sedeOperativa = indirizziRepository.findById(sedeOperativaId) .orElseThrow(() -> new NotFoundException("Indirizzo non trovato con ID: " + updatedClienti.sedeOperativaId()));;
         found.setSedeLegale(sedeLegale);

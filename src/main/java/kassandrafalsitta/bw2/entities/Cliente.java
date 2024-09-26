@@ -41,7 +41,7 @@ public class Cliente extends Utente implements UserDetails {
     @OneToOne
     private Indirizzo sedeOperativa;
 
-    public Cliente(String username, String nome, String cognome, String email, String password, long partitaIva, LocalDate dataInserimento, LocalDate dataUltimoContatto, String pec, long telefono, String emailDiContatto, long telefonoDiContatto, String logoAziendale, String tipoClienti, Indirizzo sedeLegale, Indirizzo sedeOperativa) {
+    public Cliente(String username, String nome, String cognome, String email, String password, long partitaIva, LocalDate dataInserimento, LocalDate dataUltimoContatto, String pec, long telefono, String emailDiContatto, long telefonoDiContatto, String logoAziendale, String tipoClienti) {
         super(username, nome, cognome, email, password);
         this.partitaIva = partitaIva;
         this.dataInserimento = dataInserimento;
@@ -53,8 +53,6 @@ public class Cliente extends Utente implements UserDetails {
         this.telefonoDiContatto = telefonoDiContatto;
         this.logoAziendale = logoAziendale;
         this.tipoClienti = tipoClienti;
-        this.sedeLegale = sedeLegale;
-        this.sedeOperativa = sedeOperativa;
     }
 
 
