@@ -2,6 +2,7 @@ package kassandrafalsitta.bw2.controllers;
 
 import kassandrafalsitta.bw2.entities.Cliente;
 import kassandrafalsitta.bw2.entities.Fattura;
+import kassandrafalsitta.bw2.entities.Indirizzo;
 import kassandrafalsitta.bw2.exceptions.BadRequestException;
 import kassandrafalsitta.bw2.payloads.FatturaDTO;
 import kassandrafalsitta.bw2.payloads.FatturaRespDTO;
@@ -40,6 +41,13 @@ public class FatturaController {
         return this.fattureService.findAll(page, size, sortBy);
     }
 
+    @GetMapping("/fatt/{fatturaId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public Fattura getIndirizzoById(@PathVariable UUID fatturaId) {
+        return fattureService.findById(fatturaId);
+    }
+
+
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -64,8 +72,8 @@ public class FatturaController {
     @DeleteMapping("/{clienteId2}")
     @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void findFatturaByIdAndDelete(@PathVariable UUID clienteId) {
-        fattureService.findByIdAndDelete(clienteId);
+    public void findFatturaByIdAndDelete(@PathVariable UUID clienteId2) {
+        fattureService.findByIdAndDelete(clienteId2);
     }
 
     // Endpoint per filtrare le fatture per cliente id - TESTATO
