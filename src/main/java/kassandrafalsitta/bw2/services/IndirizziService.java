@@ -53,6 +53,7 @@ public class IndirizziService {
 
         Cliente cliente = clientiService.findById(clienteId);
 
+
         // Determina il tipo di indirizzo
         TipoIndirizzo tipoIndirizzo;
         try {
@@ -119,7 +120,42 @@ public class IndirizziService {
         indirizzo.setLocalita(updatedIndirizzo.localita());
         indirizzo.setCap(updatedIndirizzo.cap());
         indirizzo.setComune(comune);
+        UUID clienteId;
+        try {
+            clienteId = UUID.fromString(updatedIndirizzo.clienteId());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("L'ID del cliente non è valido: " + updatedIndirizzo.clienteId());
+        }
 
+        Cliente cliente = clientiService.findById(clienteId);
+        indirizzo.setCliente(cliente);
+        TipoIndirizzo tipoIndirizzo;
+        try {
+            tipoIndirizzo = TipoIndirizzo.valueOf(updatedIndirizzo.tipoIndirizzo());
+        } catch (Exception e) {
+            throw new BadRequestException("Il tipo di indirizzo non è valido: " + updatedIndirizzo.tipoIndirizzo() +
+                    " Inserire 'SEDE_LEGALE' o 'SEDE_OPERATIVA'");
+        }
+        if (tipoIndirizzo == TipoIndirizzo.SEDE_LEGALE) {
+            this.indirizzoRepository.findByClienteAndTipoIndirizzo(cliente, TipoIndirizzo.SEDE_LEGALE).ifPresent(
+                    indirizzi -> {
+                        throw new BadRequestException("Il cliente ha già una sede legale registrata: " + indirizzo.getVia());
+                    }
+            );
+        } else {
+            cliente.setSedeLegale(indirizzo);
+        }
+
+        // Controlla se il cliente ha già una sede operativa
+        if (tipoIndirizzo == TipoIndirizzo.SEDE_OPERATIVA) {
+            this.indirizzoRepository.findByClienteAndTipoIndirizzo(cliente, TipoIndirizzo.SEDE_OPERATIVA).ifPresent(
+                    indirizzi -> {
+                        throw new BadRequestException("Il cliente ha già una sede operativa registrata: " + indirizzo.getVia());
+                    }
+            );
+        } else {
+            cliente.setSedeOperativa(indirizzo);
+        }
         return indirizzoRepository.save(indirizzo);
     }
 

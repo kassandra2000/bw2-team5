@@ -32,7 +32,7 @@ public class Indirizzo {
     private Comune comune;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     private Cliente cliente;
 
 
