@@ -18,8 +18,6 @@ public record ClientiUpdateDTO(
         @NotEmpty(message = "L'email è obbligatoria")
         @Email(message = "L'email inserita non è valida")
         String email,
-        @NotEmpty(message = "La password è obbligatoria")
-        @Size(min = 8, message = "La password deve avere almeno 8 caratteri")
         String password,
         @NotEmpty(message = "La Partita IVA è obbligatoria")
         @Size(min = 7, message = "La Partita IVA deve avere almeno 7 caratteri")
@@ -53,9 +51,9 @@ public record ClientiUpdateDTO(
         String tipoClienti,
         @NotEmpty(message = "L'UUID della sede legale è obbligatoria")
         @Size(min = 36, max = 36, message = "L'UUID della sede legale  deve avere 36 caratteri")
-        String sedeLegaleId,
+        String sedeLegale,
         @NotEmpty(message = "L'UUID della sede operativa è obbligatoria")
         @Size(min = 36, max = 36, message = "L'UUID della sede operativa  deve avere 36 caratteri")
-        String sedeOperativaId
+        String sedeOperativa
 ) {
 }

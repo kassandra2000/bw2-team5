@@ -133,18 +133,18 @@ public class ClientiService {
         found.setTipoClienti(updatedClienti.tipoClienti());
         UUID sedeLegaleId;
         try {
-            sedeLegaleId = UUID.fromString(updatedClienti.sedeLegaleId());
+            sedeLegaleId = UUID.fromString(updatedClienti.sedeLegale());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("L'ID del sedeLegale non è valido: " + updatedClienti.sedeLegaleId());
+            throw new IllegalArgumentException("L'ID del sedeLegale non è valido: " + updatedClienti.sedeLegale());
         }
         UUID sedeOperativaId;
         try {
-            sedeOperativaId = UUID.fromString(updatedClienti.sedeOperativaId());
+            sedeOperativaId = UUID.fromString(updatedClienti.sedeOperativa());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("L'ID delsedeOperativa non è valido: " + updatedClienti.sedeOperativaId());
+            throw new IllegalArgumentException("L'ID delsedeOperativa non è valido: " + updatedClienti.sedeOperativa());
         }
-        Indirizzo sedeLegale = indirizziRepository.findById(sedeLegaleId) .orElseThrow(() -> new NotFoundException("Indirizzo non trovato con ID: " + updatedClienti.sedeLegaleId()));;
-        Indirizzo sedeOperativa = indirizziRepository.findById(sedeOperativaId) .orElseThrow(() -> new NotFoundException("Indirizzo non trovato con ID: " + updatedClienti.sedeOperativaId()));;
+        Indirizzo sedeLegale = indirizziRepository.findById(sedeLegaleId) .orElseThrow(() -> new NotFoundException("Indirizzo non trovato con ID: " + updatedClienti.sedeLegale()));;
+        Indirizzo sedeOperativa = indirizziRepository.findById(sedeOperativaId) .orElseThrow(() -> new NotFoundException("Indirizzo non trovato con ID: " + updatedClienti.sedeOperativa()));;
         found.setSedeLegale(sedeLegale);
         found.setSedeOperativa(sedeOperativa);
         return this.clientiRepository.save(found);
