@@ -1,6 +1,7 @@
 package kassandrafalsitta.bw2.services;
 
 import kassandrafalsitta.bw2.entities.Provincia;
+import kassandrafalsitta.bw2.payloads.ProvinciaDTO;
 import kassandrafalsitta.bw2.repositories.ProvinciaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -86,5 +87,32 @@ public class ProvinciaService {
 
     public boolean isProvinceTableEmpty() {
         return provinciaRepository.count() == 0;
+    }
+
+    public List<Provincia> findAll() {
+        return provinciaRepository.findAll();
+    }
+
+    public Provincia findById(UUID id) {
+        return provinciaRepository.findById(id).orElseThrow(() -> new RuntimeException("Provincia non trovata"));
+    }
+
+    public Provincia saveProvincia(ProvinciaDTO provinciaDTO) {
+        Provincia provincia = new Provincia();
+        provincia.setNome(provinciaDTO.nome());
+        provincia.setSigla(provinciaDTO.sigla());
+        return provinciaRepository.save(provincia);
+    }
+
+    public Provincia findByIdAndUpdate(UUID id, ProvinciaDTO provinciaDTO) {
+        Provincia provincia = findById(id);
+        provincia.setNome(provinciaDTO.nome());
+        provincia.setSigla(provinciaDTO.sigla());
+        return provinciaRepository.save(provincia);
+    }
+
+    public void findByIdAndDelete(UUID id) {
+        Provincia provincia = findById(id);
+        provinciaRepository.delete(provincia);
     }
 }
