@@ -65,8 +65,8 @@ public class FatturaController {
 
     @PutMapping("/{clienteId3}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public Fattura findFatturaByIdAndUpdate(@PathVariable UUID clienteId, @RequestBody @Validated FatturaDTO body) {
-        return fattureService.findByIdAndUpdate(clienteId, body);
+    public Fattura findFatturaByIdAndUpdate(@PathVariable UUID clienteId3, @RequestBody @Validated FatturaDTO body) {
+        return fattureService.findByIdAndUpdate(clienteId3, body);
     }
 
     @DeleteMapping("/{clienteId2}")
