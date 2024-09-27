@@ -107,7 +107,6 @@ public class ClientiService {
         found.setNome(updatedClienti.nome());
         found.setCognome(updatedClienti.cognome());
         found.setEmail(updatedClienti.email());
-        found.setPassword(updatedClienti.password());
         LocalDate dataInserimento = null;
         try {
             dataInserimento = LocalDate.parse(updatedClienti.dataInserimento());

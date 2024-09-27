@@ -18,7 +18,6 @@ public record ClientiUpdateDTO(
         @NotEmpty(message = "L'email è obbligatoria")
         @Email(message = "L'email inserita non è valida")
         String email,
-        String password,
         @NotEmpty(message = "La Partita IVA è obbligatoria")
         @Size(min = 7, message = "La Partita IVA deve avere almeno 7 caratteri")
         String partitaIva,
